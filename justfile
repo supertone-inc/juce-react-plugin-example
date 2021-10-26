@@ -1,5 +1,5 @@
 start: build
-    open "./build/AudioPluginHost/AudioPluginHost_artefacts/AudioPluginHost.app" --args "$(pwd)/example.filtergraph"
+    open "./build/plugin-host/AudioPluginHost_artefacts/AudioPluginHost.app" --args "$(pwd)/example.filtergraph"
 
 build:
     cmake -S . -B build
