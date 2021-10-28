@@ -12,4 +12,3 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(JUCE)
 
 add_subdirectory(plugin)
-add_subdirectory(${juce_SOURCE_DIR}/extras/AudioPluginHost plugin-host)

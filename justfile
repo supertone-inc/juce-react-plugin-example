@@ -1,11 +1,11 @@
-OPEN_PLUGIN_HOST := if os() == "windows" {
-    "start ./build/plugin-host/AudioPluginHost_artefacts/Debug/AudioPluginHost.exe"
+RUN_STANDALONE_PLUGIN := if os() == "windows" {
+    "./build/plugin/AudioPluginExample_artefacts/Debug/Standalone/Audio Plugin Example.exe"
 } else {
-    "open ./build/plugin-host/AudioPluginHost_artefacts/AudioPluginHost.app --args"
+    "./build/plugin/AudioPluginExample_artefacts/Standalone/Audio Plugin Example.app/Contents/MacOS/Audio Plugin Example"
 }
 
 start: build
-    {{OPEN_PLUGIN_HOST}} "{{invocation_directory()}}/example.filtergraph"
+    "{{RUN_STANDALONE_PLUGIN}}"
 
 build:
     cmake -S . -B build
