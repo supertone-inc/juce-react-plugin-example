@@ -11,7 +11,16 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     setSize (400, 300);
 
     addAndMakeVisible(browser);
+
+#if DEBUG
     browser.goToURL("http://localhost:3000");
+#else
+    auto currentExecutableDir = juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory();
+    auto file = currentExecutableDir.getChildFile("renderer").getChildFile("index.html");
+    auto url = juce::URL(file);
+
+    browser.goToURL(url.toString(true));
+#endif
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
