@@ -8,7 +8,7 @@ start:
     just start-renderer & just start-plugin
 
 start-renderer:
-    yarn --cwd renderer start
+    BROWSER=none yarn --cwd renderer start
 
 start-plugin: build
     "{{RUN_STANDALONE_PLUGIN}}"
