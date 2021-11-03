@@ -11,7 +11,7 @@ RENDERER_BUILD_PATH := if os() == "windows" {
 }
 
 start:
-    just start-renderer & just start-plugin
+    just start-plugin & just start-renderer
 
 start-renderer:
     BROWSER=none yarn --cwd renderer start
