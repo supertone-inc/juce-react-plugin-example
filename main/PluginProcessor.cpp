@@ -12,10 +12,12 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                      #endif
                        )
 {
+    ws.start(0);
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 {
+    ws.stop();
 }
 
 //==============================================================================
