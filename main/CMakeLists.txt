@@ -27,6 +27,10 @@ project(AUDIO_PLUGIN_EXAMPLE VERSION 0.0.1)
 
 include(JUCE.cmake)
 
+# Asio
+include(asio.cmake)
+include_directories(${asio_SOURCE_DIR}/asio/include)
+
 # WebSocket++
 include(websocketpp.cmake)
 include_directories(${websocketpp_SOURCE_DIR})
