@@ -27,6 +27,10 @@ project(AUDIO_PLUGIN_EXAMPLE VERSION 0.0.1)
 
 include(JUCE.cmake)
 
+# WebSocket++
+include(websocketpp.cmake)
+include_directories(${websocketpp_SOURCE_DIR})
+
 # If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
 # system. This setup should be done before calling `juce_add_plugin`.
 
