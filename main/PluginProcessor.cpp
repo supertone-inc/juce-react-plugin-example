@@ -12,7 +12,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                      #endif
                        )
 {
-    ws.start(0);
+    webSocketServer.start(0);
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
