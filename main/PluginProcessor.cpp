@@ -226,7 +226,13 @@ void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
             {"level", std::accumulate(fifo.begin(), fifo.end(), 0.0f) / fifo.size()},
         };
 
-        webSocketServer.broadcast(message.dump());
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastBroadcastTime).count() / 1000.0;
+        if (elapsed > 1.0 / 60)
+        {
+            webSocketServer.broadcast(message.dump());
+            lastBroadcastTime = now;
+        }
 
         fifoIndex = 0;
     }

@@ -6,6 +6,7 @@
 #include <juce_dsp/juce_dsp.h>
 
 #include <array>
+#include <chrono>
 
 //==============================================================================
 class AudioPluginAudioProcessor : public juce::AudioProcessor
@@ -60,6 +61,7 @@ class AudioPluginAudioProcessor : public juce::AudioProcessor
     std::array<float, FFT_SIZE> fifo;
     std::array<float, FFT_SIZE * 2> fftData;
     size_t fifoIndex = 0;
+    std::chrono::steady_clock::time_point lastBroadcastTime = std::chrono::steady_clock::now();
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessor)
