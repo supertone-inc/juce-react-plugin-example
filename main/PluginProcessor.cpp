@@ -12,6 +12,9 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 #endif
       )
 {
+    webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
+        webSocketServer.broadcast(std::string("got ") + message);
+    });
     webSocketServer.start(0);
 }
 

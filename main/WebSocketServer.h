@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <set>
 #include <string>
 #include <thread>
@@ -67,6 +68,21 @@ class WebSocketServer
         });
     }
 
+    void send(ClientConnection connection, const std::string &message)
+    {
+        server.send(connection, message, websocketpp::frame::opcode::text);
+    }
+
+    void broadcast(const std::string &message)
+    {
+        std::lock_guard<std::mutex> lock(connectionsMutex);
+
+        for (auto connection : connections)
+        {
+            send(connection, message);
+        }
+    }
+
     void stop()
     {
         server.stop();
@@ -80,7 +96,10 @@ class WebSocketServer
   private:
     void onOpen(ClientConnection connection)
     {
-        connections.insert(connection);
+        {
+            std::lock_guard<std::mutex> lock(connectionsMutex);
+            connections.insert(connection);
+        }
 
         for (auto handler : connectHandlers)
         {
@@ -98,7 +117,10 @@ class WebSocketServer
 
     void onClose(ClientConnection connection)
     {
-        connections.erase(connection);
+        {
+            std::lock_guard<std::mutex> lock(connectionsMutex);
+            connections.erase(connection);
+        }
 
         for (auto handler : disconnectHandlers)
         {
@@ -108,6 +130,7 @@ class WebSocketServer
 
     WebsocketEndpoint server;
     std::set<ClientConnection, std::owner_less<ClientConnection>> connections;
+    std::mutex connectionsMutex;
     std::thread serverThread;
 
     std::vector<std::function<void(ClientConnection)>> connectHandlers;
