@@ -2,8 +2,9 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &p)
-    : AudioProcessorEditor(&p), processorRef(p)
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &audioProcessor,
+                                                                 uint16_t websocketPort)
+    : AudioProcessorEditor(&audioProcessor), processorRef(audioProcessor)
 {
     juce::ignoreUnused(processorRef);
     // Make sure that before the constructor has finished, you've set the
@@ -13,14 +14,16 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     addAndMakeVisible(browser);
 
 #if DEBUG
-    browser.goToURL("http://localhost:3000");
+    auto url = juce::URL("http://localhost:3000");
 #else
     auto currentExecutableDir = juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory();
     auto file = currentExecutableDir.getChildFile("renderer").getChildFile("index.html");
     auto url = juce::URL(file);
+#endif
+
+    url = url.withParameter("port", juce::String(websocketPort));
 
     browser.goToURL(url.toString(true));
-#endif
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()

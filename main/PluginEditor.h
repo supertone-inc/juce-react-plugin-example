@@ -7,7 +7,7 @@
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
   public:
-    explicit AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &);
+    explicit AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &audioProcessor, uint16_t websocketPort);
     ~AudioPluginAudioProcessorEditor() override;
 
     //==============================================================================

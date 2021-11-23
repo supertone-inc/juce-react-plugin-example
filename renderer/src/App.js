@@ -1,6 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 
+const websocketPort = new URL(window.location.href).searchParams.get("port");
+
 function App() {
   return (
     <div className="App">
@@ -17,6 +19,7 @@ function App() {
         >
           Learn React
         </a>
+        <p>WebSocket Port: {websocketPort}</p>
       </header>
     </div>
   );
