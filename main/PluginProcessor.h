@@ -60,8 +60,9 @@ class AudioPluginAudioProcessor : public juce::AudioProcessor
     juce::dsp::FFT forwardFFT;
     std::array<float, FFT_SIZE> fifo;
     std::array<float, FFT_SIZE * 2> fftData;
+    std::array<float, FFT_SIZE / 2> spectrum;
     size_t fifoIndex = 0;
-    std::chrono::steady_clock::time_point lastBroadcastTime = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point lastBroadcastTime;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessor)

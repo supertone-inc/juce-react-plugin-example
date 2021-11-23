@@ -214,27 +214,30 @@ void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
 {
     if (fifoIndex == FFT_SIZE)
     {
-        std::fill(fftData.begin(), fftData.end(), 0.0f);
-        std::copy(fifo.begin(), fifo.end(), fftData.begin());
+        fifoIndex = 0;
 
-        forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
+        typedef std::chrono::steady_clock clock;
 
-        std::copy(fftData.begin(), fftData.begin() + fifo.size(), fifo.begin());
+        using std::chrono::duration_cast;
+        using std::chrono::milliseconds;
 
-        json message = {
-            {"spectrum", fifo},
-            {"level", std::accumulate(fifo.begin(), fifo.end(), 0.0f) / fifo.size()},
-        };
+        auto elapsed = duration_cast<milliseconds>(clock::now() - lastBroadcastTime).count() / 1000.0;
 
-        auto now = std::chrono::steady_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastBroadcastTime).count() / 1000.0;
         if (elapsed > 1.0 / 60)
         {
-            webSocketServer.broadcast(message.dump());
-            lastBroadcastTime = now;
-        }
+            std::fill(fftData.begin(), fftData.end(), 0.0f);
+            std::copy(fifo.begin(), fifo.end(), fftData.begin());
+            forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
+            std::copy(fftData.begin(), fftData.begin() + spectrum.size(), spectrum.begin());
 
-        fifoIndex = 0;
+            json message = {
+                {"spectrum", spectrum},
+                {"level", std::accumulate(spectrum.begin(), spectrum.end(), 0.0f) / spectrum.size()},
+            };
+
+            webSocketServer.broadcast(message.dump());
+            lastBroadcastTime = clock::now();
+        }
     }
 
     fifo[fifoIndex++] = sample;
