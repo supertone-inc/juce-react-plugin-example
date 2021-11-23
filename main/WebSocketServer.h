@@ -65,7 +65,14 @@ class WebSocketServer
 
     void send(ClientConnection connection, const std::string &message)
     {
-        server.send(connection, message, websocketpp::frame::opcode::text);
+        try
+        {
+            server.send(connection, message, websocketpp::frame::opcode::text);
+        }
+        catch (std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+        }
     }
 
     void broadcast(const std::string &message)
