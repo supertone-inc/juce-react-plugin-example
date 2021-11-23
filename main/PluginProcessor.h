@@ -3,6 +3,9 @@
 #include "WebSocketServer.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_dsp/juce_dsp.h>
+
+#include <array>
 
 //==============================================================================
 class AudioPluginAudioProcessor : public juce::AudioProcessor
@@ -46,7 +49,17 @@ class AudioPluginAudioProcessor : public juce::AudioProcessor
 
   private:
     //==============================================================================
+    void pushNextSampleIntoFifo(float sample) noexcept;
+
+    //==============================================================================
     WebSocketServer webSocketServer;
+
+    static constexpr auto FFT_ORDER = 10;
+    static constexpr auto FFT_SIZE = 1 << FFT_ORDER;
+    juce::dsp::FFT forwardFFT;
+    std::array<float, FFT_SIZE> fifo;
+    std::array<float, FFT_SIZE * 2> fftData;
+    size_t fifoIndex = 0;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessor)

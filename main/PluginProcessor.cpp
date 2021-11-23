@@ -14,7 +14,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      )
+                         ),
+      forwardFFT(FFT_ORDER)
 {
     webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
         webSocketServer.broadcast(std::string("got ") + message);
@@ -155,9 +156,20 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto *channelData = buffer.getWritePointer(channel);
+        auto *channelData = buffer.getReadPointer(channel);
         juce::ignoreUnused(channelData);
         // ..do something to the data...
+    }
+
+    if (totalNumInputChannels < 1)
+    {
+        return;
+    }
+
+    auto *channelData = buffer.getReadPointer(0);
+    for (auto i = 0; i < buffer.getNumSamples(); ++i)
+    {
+        pushNextSampleIntoFifo(channelData[i]);
     }
 }
 
@@ -193,4 +205,24 @@ void AudioPluginAudioProcessor::setStateInformation(const void *data, int sizeIn
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 {
     return new AudioPluginAudioProcessor();
+}
+
+//==============================================================================
+void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
+{
+    if (fifoIndex == FFT_SIZE)
+    {
+        std::fill(fftData.begin(), fftData.end(), 0.0f);
+        std::copy(fifo.begin(), fifo.end(), fftData.begin());
+
+        forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
+
+        std::copy(fftData.begin(), fftData.begin() + fifo.size(), fifo.begin());
+
+        webSocketServer.broadcast(json(fifo).dump());
+
+        fifoIndex = 0;
+    }
+
+    fifo[fifoIndex++] = sample;
 }
