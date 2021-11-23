@@ -34,6 +34,8 @@ class WebSocketServer
         server.set_open_handler(bind(&WebSocketServer::onOpen, this, ::_1));
         server.set_message_handler(bind(&WebSocketServer::onMessage, this, ::_1, ::_2));
         server.set_close_handler(bind(&WebSocketServer::onClose, this, ::_1));
+
+        server.clear_access_channels(websocketpp::log::alevel::frame_header | websocketpp::log::alevel::frame_payload);
     }
 
     virtual ~WebSocketServer()
