@@ -223,12 +223,23 @@ void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
 
         auto elapsed = duration_cast<milliseconds>(clock::now() - lastBroadcastTime).count() / 1000.0;
 
-        if (elapsed > 1.0 / 60)
+        if (elapsed >= 1.0 / 60) // 60Hz
         {
             std::fill(fftData.begin(), fftData.end(), 0.0f);
             std::copy(fifo.begin(), fifo.end(), fftData.begin());
             forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
             std::copy(fftData.begin(), fftData.begin() + spectrum.size(), spectrum.begin());
+
+            auto mindB = -100.0f;
+            auto maxdB = 0.0f;
+
+            for (int i = 0; i < spectrum.size(); i++)
+            {
+                spectrum[i] = juce::jmap(juce::jlimit(mindB, maxdB,
+                                                      juce::Decibels::gainToDecibels(spectrum[i]) -
+                                                          juce::Decibels::gainToDecibels((float)FFT_SIZE)),
+                                         mindB, maxdB, 0.0f, 1.0f);
+            }
 
             json message = {
                 {"spectrum", spectrum},
