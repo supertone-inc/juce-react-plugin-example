@@ -18,10 +18,11 @@ export default function Spectrum({ spectrum, style, ...props }) {
     canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
     const scopeSize = spectrum.length / 4;
-    const barWidth = canvas.width / scopeSize;
+    const barGap = 1;
+    const barWidth = canvas.width / scopeSize - barGap;
     canvasCtx.fillStyle = "#f00";
 
-    for (var i = 0, x = 0; i < scopeSize; i++, x += barWidth + 1) {
+    for (var i = 0, x = 0; i < scopeSize; i++, x += barWidth + barGap) {
       const skewedProportionX = 1 - Math.exp(Math.log(1 - i / scopeSize) * 0.2);
       const dBIndex = Math.min(
         spectrum.length,
