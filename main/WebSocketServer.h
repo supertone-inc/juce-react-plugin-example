@@ -5,9 +5,13 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
+#include <functional>
 #include <iostream>
+#include <map>
 #include <set>
+#include <string>
 #include <thread>
+#include <vector>
 
 typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
 typedef websocketpp::connection_hdl ClientConnection;
@@ -32,6 +36,21 @@ class WebSocketServer
     virtual ~WebSocketServer()
     {
         stop();
+    }
+
+    template <typename Callback> void addConnectHandler(Callback handler)
+    {
+        asio::post(server.get_io_service(), [this, handler]() { connectHandlers.push_back(handler); });
+    }
+
+    template <typename Callback> void addMessageHandler(Callback handler)
+    {
+        asio::post(server.get_io_service(), [this, handler]() { messageHandlers.push_back(handler); });
+    }
+
+    template <typename Callback> void addDisconnectHandler(Callback handler)
+    {
+        asio::post(server.get_io_service(), [this, handler]() { disconnectHandlers.push_back(handler); });
     }
 
     void start(uint16_t port)
@@ -62,22 +81,36 @@ class WebSocketServer
     void onOpen(ClientConnection connection)
     {
         connections.insert(connection);
+
+        for (auto handler : connectHandlers)
+        {
+            handler(connection);
+        }
     }
 
     void onMessage(ClientConnection connection, WebsocketEndpoint::message_ptr message)
     {
-        for (auto conn : connections)
+        for (auto handler : messageHandlers)
         {
-            server.send(conn, message);
+            handler(connection, message->get_payload());
         }
     }
 
     void onClose(ClientConnection connection)
     {
         connections.erase(connection);
+
+        for (auto handler : disconnectHandlers)
+        {
+            handler(connection);
+        }
     }
 
     WebsocketEndpoint server;
     std::set<ClientConnection, std::owner_less<ClientConnection>> connections;
     std::thread serverThread;
+
+    std::vector<std::function<void(ClientConnection)>> connectHandlers;
+    std::vector<std::function<void(ClientConnection, const std::string &)>> messageHandlers;
+    std::vector<std::function<void(ClientConnection)>> disconnectHandlers;
 };
