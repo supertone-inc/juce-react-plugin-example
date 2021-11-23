@@ -218,12 +218,10 @@ void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
 
         typedef std::chrono::steady_clock clock;
 
-        using std::chrono::duration_cast;
-        using std::chrono::milliseconds;
+        std::chrono::duration<double> interval(1.0 / 60); // 60Hz
+        std::chrono::duration<double> elapsed = clock::now() - lastBroadcastTime;
 
-        auto elapsed = duration_cast<milliseconds>(clock::now() - lastBroadcastTime).count() / 1000.0;
-
-        if (elapsed >= 1.0 / 60) // 60Hz
+        if (elapsed >= interval)
         {
             std::fill(fftData.begin(), fftData.end(), 0.0f);
             std::copy(fifo.begin(), fifo.end(), fftData.begin());
