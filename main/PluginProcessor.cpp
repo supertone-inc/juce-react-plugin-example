@@ -17,7 +17,6 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 {
-    ws.stop();
 }
 
 //==============================================================================

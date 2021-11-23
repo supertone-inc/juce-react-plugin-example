@@ -29,6 +29,11 @@ public:
         m_server.set_message_handler(bind(&WebSocketServer::on_message, this, ::_1, ::_2));
     }
 
+    virtual ~WebSocketServer()
+    {
+        stop();
+    }
+
     void on_open(connection_hdl hdl)
     {
         m_connections.insert(hdl);
@@ -65,7 +70,11 @@ public:
     void stop()
     {
         m_server.stop();
-        m_server_thread.join();
+
+        if (m_server_thread.joinable())
+        {
+            m_server_thread.join();
+        }
     }
 
 private:
