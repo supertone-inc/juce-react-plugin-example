@@ -10,6 +10,7 @@
 #include <map>
 #include <mutex>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <vector>
@@ -19,6 +20,7 @@ typedef websocketpp::connection_hdl ClientConnection;
 
 using websocketpp::lib::bind;
 using websocketpp::lib::asio::error_code;
+using websocketpp::lib::asio::ip::tcp;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 
@@ -56,16 +58,9 @@ class WebSocketServer
 
     void start(uint16_t port)
     {
-        serverThread = std::thread([=]() {
-            server.listen(port);
-
-            error_code ec;
-            auto endpoint = server.get_local_endpoint(ec);
-            std::cout << "WebSocketServer listening on " << endpoint << std::endl;
-
-            server.start_accept();
-            server.run();
-        });
+        server.listen(port);
+        server.start_accept();
+        serverThread = std::thread([this]() { server.run(); });
     }
 
     void send(ClientConnection connection, const std::string &message)
@@ -91,6 +86,20 @@ class WebSocketServer
         {
             serverThread.join();
         }
+    }
+
+    tcp::endpoint getLocalEndpoint()
+    {
+        error_code errorCode;
+
+        tcp::endpoint localEndpoint = server.get_local_endpoint(errorCode);
+
+        if (errorCode)
+        {
+            throw std::runtime_error(errorCode.message());
+        }
+
+        return localEndpoint;
     }
 
   private:
