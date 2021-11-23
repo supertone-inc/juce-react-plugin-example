@@ -3,6 +3,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <numeric>
+
 using json = nlohmann::json;
 
 //==============================================================================
@@ -219,7 +221,12 @@ void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
 
         std::copy(fftData.begin(), fftData.begin() + fifo.size(), fifo.begin());
 
-        webSocketServer.broadcast(json(fifo).dump());
+        json message = {
+            {"spectrum", fifo},
+            {"level", std::accumulate(fifo.begin(), fifo.end(), 0.0f) / fifo.size()},
+        };
+
+        webSocketServer.broadcast(message.dump());
 
         fifoIndex = 0;
     }
