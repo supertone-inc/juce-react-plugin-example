@@ -65,6 +65,7 @@ juce_add_plugin(AudioPluginExample
     # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
     PLIST_TO_MERGE "${plist_content}"
     APP_SANDBOX_ENABLED TRUE                    # Required to enable audio input for standalone plugin
+    MICROPHONE_PERMISSION_ENABLED TRUE          # Required to enable audio input for standalone plugin
     PLUGIN_MANUFACTURER_CODE Juce               # A four-character manufacturer id with at least one upper-case character
     PLUGIN_CODE Dem0                            # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
