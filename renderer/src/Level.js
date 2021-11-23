@@ -1,4 +1,4 @@
-export default function LevelMeter({ level, style, ...props }) {
+export default function Level({ level, style, ...props }) {
   return (
     <div style={{ ...style }} {...props}>
       <div
