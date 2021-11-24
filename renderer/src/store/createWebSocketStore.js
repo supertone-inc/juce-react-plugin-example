@@ -3,20 +3,20 @@ export default function createWebSocketStore(url, protocols) {
 
   const callbacks = new Set();
 
-  let lastMessage = null;
+  let lastState = null;
 
   socket.onmessage = (event) => {
-    lastMessage = JSON.parse(event.data);
+    lastState = JSON.parse(event.data);
 
     for (const callback of callbacks) {
-      callback(lastMessage);
+      callback(lastState);
     }
   };
 
   return {
     subscribe(callback) {
       callbacks.add(callback);
-      callback(lastMessage);
+      callback(lastState);
 
       return () => {
         callbacks.delete(callback);
