@@ -27,6 +27,17 @@ project(AUDIO_PLUGIN_EXAMPLE VERSION 0.0.1)
 
 include(JUCE.cmake)
 
+# Asio
+include(asio.cmake)
+include_directories(${asio_SOURCE_DIR}/asio/include)
+
+# WebSocket++
+include(websocketpp.cmake)
+include_directories(${websocketpp_SOURCE_DIR})
+
+# JSON for Modern C++
+include(json.cmake)
+
 # If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
 # system. This setup should be done before calling `juce_add_plugin`.
 
@@ -113,6 +124,8 @@ target_link_libraries(AudioPluginExample
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
         juce::juce_audio_utils
+        juce::juce_dsp
+        nlohmann_json::nlohmann_json
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

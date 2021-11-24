@@ -1,6 +1,12 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include <nlohmann/json.hpp>
+
+#include <numeric>
+
+using json = nlohmann::json;
+
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     : AudioProcessor(BusesProperties()
@@ -10,8 +16,14 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      )
+                         ),
+      forwardFFT(FFT_ORDER)
 {
+    webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
+        webSocketServer.broadcast(std::string("got ") + message);
+    });
+    webSocketServer.start(0);
+    DBG("WebSocketServer listening on port " << webSocketServer.getLocalEndpoint().port());
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
@@ -146,9 +158,20 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto *channelData = buffer.getWritePointer(channel);
+        auto *channelData = buffer.getReadPointer(channel);
         juce::ignoreUnused(channelData);
         // ..do something to the data...
+    }
+
+    if (totalNumInputChannels < 1)
+    {
+        return;
+    }
+
+    auto *channelData = buffer.getReadPointer(0);
+    for (auto i = 0; i < buffer.getNumSamples(); ++i)
+    {
+        pushNextSampleIntoFifo(channelData[i]);
     }
 }
 
@@ -160,7 +183,7 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor *AudioPluginAudioProcessor::createEditor()
 {
-    return new AudioPluginAudioProcessorEditor(*this);
+    return new AudioPluginAudioProcessorEditor(*this, webSocketServer.getLocalEndpoint().port());
 }
 
 //==============================================================================
@@ -184,4 +207,47 @@ void AudioPluginAudioProcessor::setStateInformation(const void *data, int sizeIn
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 {
     return new AudioPluginAudioProcessor();
+}
+
+//==============================================================================
+void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
+{
+    if (fifoIndex == FFT_SIZE)
+    {
+        fifoIndex = 0;
+
+        typedef std::chrono::steady_clock clock;
+
+        std::chrono::duration<double> interval(1.0 / 60); // 60Hz
+        std::chrono::duration<double> elapsed = clock::now() - lastBroadcastTime;
+
+        if (elapsed >= interval)
+        {
+            std::fill(fftData.begin(), fftData.end(), 0.0f);
+            std::copy(fifo.begin(), fifo.end(), fftData.begin());
+            forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
+            std::copy(fftData.begin(), fftData.begin() + spectrum.size(), spectrum.begin());
+
+            auto mindB = -100.0f;
+            auto maxdB = 0.0f;
+
+            for (int i = 0; i < spectrum.size(); i++)
+            {
+                spectrum[i] = juce::jmap(juce::jlimit(mindB, maxdB,
+                                                      juce::Decibels::gainToDecibels(spectrum[i]) -
+                                                          juce::Decibels::gainToDecibels((float)FFT_SIZE)),
+                                         mindB, maxdB, 0.0f, 1.0f);
+            }
+
+            json message = {
+                {"spectrum", spectrum},
+                {"level", std::accumulate(spectrum.begin(), spectrum.end(), 0.0f) / spectrum.size()},
+            };
+
+            webSocketServer.broadcast(message.dump());
+            lastBroadcastTime = clock::now();
+        }
+    }
+
+    fifo[fifoIndex++] = sample;
 }
