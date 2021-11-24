@@ -24,12 +24,12 @@ export default function Spectrum({ spectrum, style, ...props }) {
 
     for (var i = 0, x = 0; i < scopeSize; i++, x += barWidth + barGap) {
       const skewedProportionX = 1 - Math.exp(Math.log(1 - i / scopeSize) * 0.2);
-      const dBIndex = Math.min(
+      const remappedIndex = Math.min(
         spectrum.length,
         (skewedProportionX * spectrum.length).toFixed()
       );
 
-      const barHeight = canvas.height * spectrum[dBIndex];
+      const barHeight = canvas.height * spectrum[remappedIndex];
 
       canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     }
