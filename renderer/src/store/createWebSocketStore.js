@@ -16,11 +16,14 @@ export default function createWebSocketStore(url, protocols) {
   return {
     subscribe(callback) {
       callbacks.add(callback);
+
       callback(lastState);
 
-      return () => {
+      function unsubscribe() {
         callbacks.delete(callback);
-      };
+      }
+
+      return unsubscribe;
     },
     dispatch(action) {
       socket.send(action);
