@@ -4,16 +4,31 @@
     "build": "yarn build-renderer && yarn build-main",
     "build-main": "node scripts build-main",
     "build-renderer": "node scripts build-renderer",
+    "prepare": "husky install",
     "start": "concurrently -k -n main,renderer yarn:start-main yarn:start-renderer",
     "start-main": "node scripts start-main",
     "start-renderer": "node scripts start-renderer"
+  },
+  "devDependencies": {
+    "concurrently": "^6.4.0",
+    "husky": ">=6",
+    "import-sort-style-module": "^6.0.0",
+    "lint-staged": ">=10",
+    "prettier": "^2.4.1",
+    "prettier-plugin-import-sort": "^0.0.7",
+    "prettier-plugin-package": "^1.3.0"
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module"
+    }
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown"
   },
   "workspaces": {
     "packages": [
       "renderer"
     ]
-  },
-  "devDependencies": {
-    "concurrently": "^6.4.0"
   }
 }
