@@ -1,6 +1,7 @@
 #pragma once
 
 #define ASIO_STANDALONE
+#define _WEBSOCKETPP_CPP11_INTERNAL_
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>

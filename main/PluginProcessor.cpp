@@ -23,7 +23,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
         webSocketServer.broadcast(std::string("got ") + message);
     });
     webSocketServer.start(0);
-    DBG("WebSocketServer listening on port " << webSocketServer.getLocalEndpoint().port());
+    DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
