@@ -1,6 +1,6 @@
 import Level from "./Level";
 import Spectrum from "./Spectrum";
-import { createWebSocketStore, StoreProvider } from "./store";
+import { StoreProvider, createWebSocketStore } from "./store";
 
 const port = new URL(window.location.href).searchParams.get("port");
 
@@ -20,7 +20,15 @@ export default function App() {
           <Spectrum style={{ flex: 1 }} spectrum={state?.spectrum} />
           <Level style={{ width: 20 }} level={state?.level} />
 
-          <div style={{ position: "fixed", left: 0, bottom: 0, margin: 10, fontSize: 10 }}>
+          <div
+            style={{
+              position: "fixed",
+              left: 0,
+              bottom: 0,
+              margin: 10,
+              fontSize: 10,
+            }}
+          >
             Port: {port}
           </div>
         </div>
