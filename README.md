@@ -1,27 +1,31 @@
-# juce-rust-react-plugin-example
+# juce-react-plugin-example
 
-Test and demonstrate how to develop a plugin with **React.js** for GUI and **Rust** for core logic.
+Test and demonstrate how to develop a JUCE plugin with React.js.
 
 ## Prerequisites
 
-- [Rust](https://www.rust-lang.org/tools/install)
-- [just](https://github.com/casey/just#installation)
 - [CMake](https://cmake.org/download) (See [this](https://cgold.readthedocs.io/en/latest/first-step/installation.html) for installation.)
 - [Node.js](https://nodejs.org) (Using [nvm](https://github.com/nvm-sh/nvm) is recommended.)
 - [Yarn](https://yarnpkg.com/getting-started/install)
 
 ## Getting Started
 
+Install dependencies:
+
+```shell
+yarn install
+```
+
 To run the standalone plugin in debug mode:
 
 ```shell
-just start
+yarn start
 ```
 
 To build the standalone plugin for release:
 
 ```shell
-just build
+yarn build
 ```
 
 ## Audio Routing
