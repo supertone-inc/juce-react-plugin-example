@@ -1,13 +1,11 @@
 {
   "private": true,
   "scripts": {
-    "build": "yarn build-renderer && yarn build-main",
-    "build-main": "node scripts build-main",
-    "build-renderer": "node scripts build-renderer",
+    "build": "yarn --cwd renderer build && yarn --cwd main build",
     "prepare": "husky install",
     "start": "concurrently -k -n main,renderer yarn:start-main yarn:start-renderer",
-    "start-main": "node scripts start-main",
-    "start-renderer": "node scripts start-renderer"
+    "start-main": "yarn --cwd main start",
+    "start-renderer": "yarn --cwd renderer start"
   },
   "devDependencies": {
     "concurrently": "^6.4.0",
@@ -29,7 +27,8 @@
   },
   "workspaces": {
     "packages": [
-      "renderer"
+      "renderer",
+      "main"
     ]
   }
 }
