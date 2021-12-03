@@ -8,6 +8,7 @@
     "start-renderer": "yarn --cwd renderer start"
   },
   "devDependencies": {
+    "clang-format": "^1.6.0",
     "concurrently": "^6.4.0",
     "husky": ">=6",
     "import-sort-style-module": "^6.0.0",
