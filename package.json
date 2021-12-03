@@ -23,7 +23,7 @@
     }
   },
   "lint-staged": {
-    "*.{h,cpp}": "clang-format -i --fallback-style=Microsoft",
+    "*.{h,cpp}": "clang-format -i",
     "*": "prettier --write --ignore-unknown"
   },
   "workspaces": {
