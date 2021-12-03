@@ -27,7 +27,7 @@ using websocketpp::lib::placeholders::_2;
 
 class WebSocketServer
 {
-  public:
+public:
     WebSocketServer()
     {
         server.init_asio();
@@ -112,7 +112,7 @@ class WebSocketServer
         return localEndpoint;
     }
 
-  private:
+private:
     void onOpen(ClientConnection connection)
     {
         {

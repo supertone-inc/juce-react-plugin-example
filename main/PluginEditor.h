@@ -6,7 +6,7 @@
 //==============================================================================
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
-  public:
+public:
     explicit AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &audioProcessor, uint16_t websocketPort);
     ~AudioPluginAudioProcessorEditor() override;
 
@@ -14,7 +14,7 @@ class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor
     void paint(juce::Graphics &) override;
     void resized() override;
 
-  private:
+private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     AudioPluginAudioProcessor &processorRef;

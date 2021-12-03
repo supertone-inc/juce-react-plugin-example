@@ -11,7 +11,7 @@
 //==============================================================================
 class AudioPluginAudioProcessor : public juce::AudioProcessor
 {
-  public:
+public:
     //==============================================================================
     AudioPluginAudioProcessor();
     ~AudioPluginAudioProcessor() override;
@@ -48,7 +48,7 @@ class AudioPluginAudioProcessor : public juce::AudioProcessor
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
 
-  private:
+private:
     //==============================================================================
     void pushNextSampleIntoFifo(float sample) noexcept;
 
