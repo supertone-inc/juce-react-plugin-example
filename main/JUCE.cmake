@@ -9,4 +9,7 @@ FetchContent_Declare(
     GIT_SHALLOW     TRUE
 )
 
-FetchContent_MakeAvailable(JUCE)
+if(NOT juce_POPULATED)
+    FetchContent_Populate(JUCE)
+    add_subdirectory(${juce_SOURCE_DIR} ${juce_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
