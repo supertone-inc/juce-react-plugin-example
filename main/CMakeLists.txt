@@ -25,18 +25,7 @@ project(AUDIO_PLUGIN_EXAMPLE VERSION 0.0.1)
 # or
 # add_subdirectory(JUCE)                    # If you've put JUCE in a subdirectory called JUCE
 
-include(JUCE.cmake)
-
-# Asio
-include(asio.cmake)
-include_directories(${asio_SOURCE_DIR}/asio/include)
-
-# WebSocket++
-include(websocketpp.cmake)
-include_directories(${websocketpp_SOURCE_DIR})
-
-# JSON for Modern C++
-include(json.cmake)
+include(dependencies.cmake)
 
 # If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
 # system. This setup should be done before calling `juce_add_plugin`.
