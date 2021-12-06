@@ -77,8 +77,8 @@ juce_add_plugin(AudioPluginExample
 
 target_sources(AudioPluginExample
     PRIVATE
-        Source/PluginEditor.cpp
-        Source/PluginProcessor.cpp)
+        src/PluginEditor.cpp
+        src/PluginProcessor.cpp)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
