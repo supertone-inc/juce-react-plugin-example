@@ -1,8 +1,8 @@
 # juce-react-plugin-example
 
-Test and demonstrate how to develop a JUCE plugin with React.js.
+Developing a JUCE plugin with React.js.
 
-## Prerequisites
+## Requirements
 
 - [CMake](https://cmake.org/download) (See [this](https://cgold.readthedocs.io/en/latest/first-step/installation.html) for installation.)
 - [Node.js](https://nodejs.org) (Using [nvm](https://github.com/nvm-sh/nvm) is recommended.)
@@ -10,23 +10,27 @@ Test and demonstrate how to develop a JUCE plugin with React.js.
 
 ## Getting Started
 
-Install dependencies:
+### Installing Dependencies
 
 ```shell
 yarn install
 ```
 
-To run the standalone plugin in debug mode:
+### Developing the Plugins
 
 ```shell
 yarn start
 ```
 
-To build the standalone plugin for release:
+This will run the React app in the development mode and run the standalone plugin in debug mode:
+
+### Building the Plugins
 
 ```shell
 yarn build
 ```
+
+This will build the React app and the plugin for release. The resulting static web files of the React app will be copied into the plugin's internal directory.
 
 ## Audio Routing
 
