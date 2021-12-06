@@ -9,4 +9,7 @@ FetchContent_Declare(
     GIT_SHALLOW     TRUE
 )
 
-FetchContent_MakeAvailable(websocketpp)
+if(NOT websocketpp_POPULATED)
+    FetchContent_Populate(websocketpp)
+    add_subdirectory(${websocketpp_SOURCE_DIR} ${websocketpp_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
