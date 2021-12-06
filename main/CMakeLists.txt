@@ -119,3 +119,20 @@ target_link_libraries(AudioPluginExample
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
+
+# Copy renderer files
+# Reference: https://github.com/juce-framework/JUCE/blob/6.1.2/extras/Build/CMake/JUCEUtils.cmake#L828
+if(RENDERER_DIR)
+    if(TARGET AudioPluginExample_Standalone)
+        add_custom_command(
+            TARGET AudioPluginExample_Standalone
+            POST_BUILD
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMAND ${CMAKE_COMMAND}
+                -Dsrc=${RENDERER_DIR}/
+                -Ddest=$<TARGET_FILE_DIR:AudioPluginExample_Standalone>/renderer
+                -P ${JUCE_CMAKE_UTILS_DIR}/copyDir.cmake
+            VERBATIM
+        )
+    endif()
+endif()

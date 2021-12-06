@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "yarn --cwd renderer build && yarn --cwd main build",
+    "build": "yarn --cwd renderer build && yarn --cwd main build-release",
     "prepare": "husky install",
     "start": "concurrently -k -n main,renderer yarn:start-main yarn:start-renderer",
     "start-main": "yarn --cwd main start",
