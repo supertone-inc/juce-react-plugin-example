@@ -7,8 +7,10 @@ FetchContent_Declare(
     GIT_TAG         asio-1-21-0
     GIT_SHALLOW     TRUE
 )
-FetchContent_MakeAvailable(asio)
-include_directories(${asio_SOURCE_DIR}/asio/include)
+if(NOT asio_POPULATED)
+    FetchContent_Populate(asio)
+    include_directories(${asio_SOURCE_DIR}/asio/include)
+endif()
 
 FetchContent_Declare(
     json
@@ -16,7 +18,10 @@ FetchContent_Declare(
     GIT_TAG         v3.10.4
     GIT_SHALLOW     TRUE
 )
-FetchContent_MakeAvailable(json)
+if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 FetchContent_Declare(
     JUCE
@@ -37,6 +42,5 @@ FetchContent_Declare(
 )
 if(NOT websocketpp_POPULATED)
     FetchContent_Populate(websocketpp)
-    add_subdirectory(${websocketpp_SOURCE_DIR} ${websocketpp_BINARY_DIR} EXCLUDE_FROM_ALL)
     include_directories(${websocketpp_SOURCE_DIR})
 endif()
