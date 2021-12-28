@@ -1,1 +1,13 @@
-{ BasedOnStyle: Microsoft, AccessModifierOffset: -4 }
+{
+  BasedOnStyle: Microsoft,
+  AccessModifierOffset: -4,
+  AllowAllArgumentsOnNextLine: false,
+  AllowAllConstructorInitializersOnNextLine: false,
+  AllowAllParametersOfDeclarationOnNextLine: false,
+  AlwaysBreakTemplateDeclarations: Yes,
+  BinPackArguments: false,
+  BinPackParameters: false,
+  BreakConstructorInitializers: BeforeComma,
+  BreakInheritanceList: BeforeComma,
+  IncludeBlocks: Regroup,
+}
