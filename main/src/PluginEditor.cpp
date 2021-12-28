@@ -1,10 +1,12 @@
 #include "PluginEditor.h"
+
 #include "PluginProcessor.h"
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &audioProcessor,
                                                                  uint16_t websocketPort)
-    : AudioProcessorEditor(&audioProcessor), processorRef(audioProcessor)
+    : AudioProcessorEditor(&audioProcessor)
+    , processorRef(audioProcessor)
 {
     juce::ignoreUnused(processorRef);
     // Make sure that before the constructor has finished, you've set the

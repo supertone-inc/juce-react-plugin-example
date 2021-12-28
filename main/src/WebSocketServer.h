@@ -3,9 +3,6 @@
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_INTERNAL_
 
-#include <websocketpp/config/asio_no_tls.hpp>
-#include <websocketpp/server.hpp>
-
 #include <functional>
 #include <iostream>
 #include <map>
@@ -15,6 +12,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <websocketpp/config/asio_no_tls.hpp>
+#include <websocketpp/server.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
 typedef websocketpp::connection_hdl ClientConnection;
@@ -44,17 +43,20 @@ public:
         stop();
     }
 
-    template <typename Callback> void addConnectHandler(Callback handler)
+    template <typename Callback>
+    void addConnectHandler(Callback handler)
     {
         asio::post(server.get_io_service(), [this, handler]() { connectHandlers.push_back(handler); });
     }
 
-    template <typename Callback> void addMessageHandler(Callback handler)
+    template <typename Callback>
+    void addMessageHandler(Callback handler)
     {
         asio::post(server.get_io_service(), [this, handler]() { messageHandlers.push_back(handler); });
     }
 
-    template <typename Callback> void addDisconnectHandler(Callback handler)
+    template <typename Callback>
+    void addDisconnectHandler(Callback handler)
     {
         asio::post(server.get_io_service(), [this, handler]() { disconnectHandlers.push_back(handler); });
     }

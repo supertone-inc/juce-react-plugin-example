@@ -1,8 +1,8 @@
 #include "PluginProcessor.h"
+
 #include "PluginEditor.h"
 
 #include <nlohmann/json.hpp>
-
 #include <numeric>
 
 using json = nlohmann::json;
@@ -16,8 +16,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-                         ),
-      forwardFFT(FFT_ORDER)
+                         )
+    , forwardFFT(FFT_ORDER)
 {
     webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
         webSocketServer.broadcast(std::string("got ") + message);
@@ -233,10 +233,14 @@ void AudioPluginAudioProcessor::pushNextSampleIntoFifo(float sample) noexcept
 
             for (int i = 0; i < spectrum.size(); i++)
             {
-                spectrum[i] = juce::jmap(juce::jlimit(mindB, maxdB,
+                spectrum[i] = juce::jmap(juce::jlimit(mindB,
+                                                      maxdB,
                                                       juce::Decibels::gainToDecibels(spectrum[i]) -
                                                           juce::Decibels::gainToDecibels((float)FFT_SIZE)),
-                                         mindB, maxdB, 0.0f, 1.0f);
+                                         mindB,
+                                         maxdB,
+                                         0.0f,
+                                         1.0f);
             }
 
             json message = {
