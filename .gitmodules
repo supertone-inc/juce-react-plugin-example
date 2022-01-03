@@ -1,0 +1,16 @@
+[submodule "main/deps/asio"]
+	path = main/deps/asio
+	url = https://github.com/chriskohlhoff/asio.git
+	shallow = true
+[submodule "main/deps/json"]
+	path = main/deps/json
+	url = https://github.com/nlohmann/json.git
+	shallow = true
+[submodule "main/deps/JUCE"]
+	path = main/deps/JUCE
+	url = https://github.com/juce-framework/JUCE.git
+	shallow = true
+[submodule "main/deps/websocketpp"]
+	path = main/deps/websocketpp
+	url = https://github.com/zaphoyd/websocketpp.git
+	shallow = true

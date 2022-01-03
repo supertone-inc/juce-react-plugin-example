@@ -5,6 +5,7 @@
   "scripts": {
     "build-debug": "cmake -S . -B build -U RENDERER_DIR -D CMAKE_BUILD_TYPE=Debug && cmake --build build --config Debug",
     "build-release": "cmake -S . -B build -D RENDERER_DIR=../renderer/build -D CMAKE_BUILD_TYPE=Release && cmake --build build --config Release",
+    "prepare": "git submodule update --init",
     "start": "yarn build-debug && run-script-os",
     "start:macos": "'./build/AudioPluginExample_artefacts/Debug/Standalone/Audio Plugin Example.app/Contents/MacOS/Audio Plugin Example'",
     "start:windows": "'./build/AudioPluginExample_artefacts/Debug/Standalone/Audio Plugin Example.exe'"
