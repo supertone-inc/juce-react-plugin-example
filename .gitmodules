@@ -2,6 +2,10 @@
 	path = main/deps/asio
 	url = https://github.com/chriskohlhoff/asio.git
 	shallow = true
+[submodule "main/deps/boost/asio"]
+	path = main/deps/boost/asio
+	url = https://github.com/boostorg/asio.git
+	shallow = true
 [submodule "main/deps/boost/assert"]
 	path = main/deps/boost/assert
 	url = https://github.com/boostorg/assert.git
@@ -29,6 +33,14 @@
 [submodule "main/deps/boost/static_assert"]
 	path = main/deps/boost/static_assert
 	url = https://github.com/boostorg/static_assert.git
+	shallow = true
+[submodule "main/deps/boost/system"]
+	path = main/deps/boost/system
+	url = https://github.com/boostorg/system.git
+	shallow = true
+[submodule "main/deps/boost/throw_exception"]
+	path = main/deps/boost/throw_exception
+	url = https://github.com/boostorg/throw_exception.git
 	shallow = true
 [submodule "main/deps/json"]
 	path = main/deps/json
