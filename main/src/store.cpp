@@ -4,8 +4,6 @@
 #include <lager/event_loop/manual.hpp>
 
 auto reducer = [](State state, Action action) {
-    DBG("action dispatched: " << action.dump());
-
     if (action["type"].get<std::string>() == ActionType::UPDATE_AUDIO_SAMPLE)
     {
         static constexpr auto FFT_ORDER = 10;

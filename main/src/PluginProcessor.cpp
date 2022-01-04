@@ -19,6 +19,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     });
     webSocketServer.start(0);
     DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
+
+    lager::watch(store, [&](auto state) { webSocketServer.broadcast(state.dump()); });
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
