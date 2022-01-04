@@ -10,6 +10,14 @@
 	path = main/deps/JUCE
 	url = https://github.com/juce-framework/JUCE.git
 	shallow = true
+[submodule "main/deps/redux-cpp"]
+	path = main/deps/redux-cpp
+	url = https://github.com/supertone-inc/redux-cpp.git
+	shallow = true
+[submodule "main/deps/RxCpp"]
+	path = main/deps/RxCpp
+	url = https://github.com/ReactiveX/RxCpp.git
+	shallow = true
 [submodule "main/deps/websocketpp"]
 	path = main/deps/websocketpp
 	url = https://github.com/zaphoyd/websocketpp.git

@@ -1,4 +1,6 @@
 include_directories(SYSTEM deps/asio/asio/include)
 include_directories(SYSTEM deps/json/single_include)
 add_subdirectory(deps/JUCE)
+include_directories(SYSTEM deps/redux-cpp/include)
+include_directories(SYSTEM deps/RxCpp/Rx/v2/src)
 include_directories(SYSTEM deps/websocketpp)
