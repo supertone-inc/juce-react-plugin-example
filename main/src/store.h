@@ -12,7 +12,7 @@ using Store = lager::store<Action, State>;
 
 namespace ActionType
 {
-const std::string UPDATE_AUDIO_SAMPLE("UPDATE_AUDIO_SAMPLE");
+const std::string UPDATE_AUDIO_BUFFER("UPDATE_AUDIO_BUFFER");
 }
 
 Store create_store(boost::asio::io_context &context);
