@@ -1,5 +1,6 @@
 #pragma once
 
+#include <lager/event_loop/boost_asio.hpp>
 #include <lager/store.hpp>
 #include <nlohmann/json.hpp>
 
@@ -14,4 +15,4 @@ namespace ActionType
 const std::string UPDATE_AUDIO_SAMPLE("UPDATE_AUDIO_SAMPLE");
 }
 
-Store create_store();
+Store create_store(boost::asio::io_context &context);

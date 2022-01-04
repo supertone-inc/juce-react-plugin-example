@@ -1,7 +1,6 @@
 #include "store.h"
 
 #include <juce_dsp/juce_dsp.h>
-#include <lager/event_loop/manual.hpp>
 
 auto reducer = [](State state, Action action) {
     if (action["type"].get<std::string>() == ActionType::UPDATE_AUDIO_SAMPLE)
@@ -56,7 +55,9 @@ auto reducer = [](State state, Action action) {
     return state;
 };
 
-Store create_store()
+Store create_store(boost::asio::io_context &context)
 {
-    return lager::make_store<Action>(State(), lager::with_manual_event_loop{}, lager::with_reducer(reducer));
+    return lager::make_store<Action>(State(),
+                                     lager::with_boost_asio_event_loop{context.get_executor()},
+                                     lager::with_reducer(reducer));
 }

@@ -12,7 +12,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                          )
-    , store(create_store())
+    , store_context()
+    , store(create_store(store_context))
 {
     webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
         webSocketServer.broadcast(std::string("got ") + message);
@@ -163,6 +164,9 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
             {
                 store.dispatch(Action{{"type", ActionType::UPDATE_AUDIO_SAMPLE}, {"payload", channelData[i]}});
             }
+
+            store_context.restart();
+            store_context.run();
         }
     }
 }
