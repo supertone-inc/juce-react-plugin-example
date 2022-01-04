@@ -11,7 +11,7 @@ using Store = redux::Store<State, Action>;
 
 namespace ActionType
 {
-const std::string UPDATE_AUDIO_SAMPLE("UPDATE_AUDIO_SAMPLE");
+const std::string UPDATE_AUDIO_BUFFER("UPDATE_AUDIO_BUFFER");
 }
 
 Store create_store();

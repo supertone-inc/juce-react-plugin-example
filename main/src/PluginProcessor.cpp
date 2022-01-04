@@ -157,12 +157,10 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     {
         if (channel == 0)
         {
-            auto *channelData = buffer.getReadPointer(channel);
+            auto *readPointer = buffer.getReadPointer(channel);
+            std::vector<float> channelData(readPointer, readPointer + buffer.getNumSamples());
 
-            for (auto i = 0; i < buffer.getNumSamples(); ++i)
-            {
-                store.dispatch(Action{{"type", ActionType::UPDATE_AUDIO_SAMPLE}, {"payload", channelData[i]}});
-            }
+            store.dispatch(Action{{"type", ActionType::UPDATE_AUDIO_BUFFER}, {"payload", std::move(channelData)}});
         }
     }
 }
