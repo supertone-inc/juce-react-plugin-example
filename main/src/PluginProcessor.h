@@ -50,7 +50,9 @@ private:
     void pushNextSampleIntoFifo(float sample) noexcept;
 
     //==============================================================================
-    boost::asio::io_context store_context;
+    boost::asio::io_context store_work_io_context;
+    boost::asio::executor_work_guard<boost::asio::io_context::executor_type> store_work;
+    std::thread store_work_thread;
     Store store;
     WebSocketServer webSocketServer;
 
