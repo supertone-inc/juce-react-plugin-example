@@ -49,7 +49,7 @@ function Knob({
   value,
   min = 0,
   max = 1,
-  valuePerPixel = 0.005,
+  step = 0.01,
   size = 100,
   color = "#f00",
   background = "rgba(255, 0, 0, 0.25)",
@@ -64,9 +64,8 @@ function Knob({
     const initialY = event.pageY;
 
     function handleMouseMove(event) {
-      const y = event.pageY;
-      const dValue = (initialY - y) * valuePerPixel;
-      const newValue = clamp(min, max, value + dValue);
+      const deltaY = event.pageY - initialY;
+      const newValue = clamp(min, max, value - deltaY * step);
 
       onChange?.(newValue);
     }
@@ -84,12 +83,19 @@ function Knob({
     window.addEventListener("mouseup", handleMouseUp);
   }
 
+  function handleWheel(event) {
+    const newValue = clamp(min, max, value + event.deltaY * step);
+
+    onChange?.(newValue);
+  }
+
   return (
     <svg
       style={{ cursor: "ns-resize", ...style }}
       width={size}
       height={size}
       onMouseDown={handleMouseDown}
+      onWheel={handleWheel}
       {...props}
     >
       <Arc
@@ -110,6 +116,7 @@ export default function GainKnob({
   gain,
   min = 0,
   max = 1,
+  step = 0.01,
   onChange,
   ...props
 }) {
@@ -128,7 +135,13 @@ export default function GainKnob({
           position: "relative",
         }}
       >
-        <Knob value={gain} min={min} max={max} onChange={handleChange} />
+        <Knob
+          value={gain}
+          min={min}
+          max={max}
+          step={step}
+          onChange={handleChange}
+        />
         <div
           style={{
             position: "absolute",
@@ -152,7 +165,7 @@ export default function GainKnob({
             value={gain}
             min={min}
             max={max}
-            step={0.01}
+            step={step}
             maxLength={3}
             onChange={handleInputChange}
           />
