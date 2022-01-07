@@ -72,7 +72,7 @@ auto reducer = [](State state, Action action) -> std::pair<State, lager::effect<
     return {state, lager::noop};
 };
 
-Store create_store(boost::asio::io_context &context)
+Store createStore(boost::asio::io_context &context)
 {
     return lager::make_store<Action>(State(),
                                      lager::with_boost_asio_event_loop{context.get_executor()},

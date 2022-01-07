@@ -12,10 +12,10 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                          )
-    , store_work_io_context()
-    , store_work(boost::asio::make_work_guard(store_work_io_context))
-    , store_work_thread(std::thread([&]() { store_work_io_context.run(); }))
-    , store(create_store(store_work_io_context))
+    , storeWorkIoContext()
+    , storeWork(boost::asio::make_work_guard(storeWorkIoContext))
+    , storeWorkThread(std::thread([&]() { storeWorkIoContext.run(); }))
+    , store(createStore(storeWorkIoContext))
 {
     webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
         webSocketServer.broadcast(std::string("got ") + message);
@@ -28,11 +28,11 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 {
-    store_work.reset();
+    storeWork.reset();
 
-    if (store_work_thread.joinable())
+    if (storeWorkThread.joinable())
     {
-        store_work_thread.join();
+        storeWorkThread.join();
     }
 }
 

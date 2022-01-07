@@ -17,4 +17,4 @@ const std::string SET_SPECTRUM("SET_SPECTRUM");
 const std::string UPDATE_AUDIO_BUFFER("UPDATE_AUDIO_BUFFER");
 } // namespace ActionType
 
-Store create_store(boost::asio::io_context &context);
+Store createStore(boost::asio::io_context &context);
