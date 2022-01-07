@@ -165,8 +165,8 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    static auto previousGain = parameters.getRawParameterValue("gain")->load();
-    auto currentGain = parameters.getRawParameterValue("gain")->load();
+    static float previousGain = store.get()["parameters"]["gain"];
+    float currentGain = store.get()["parameters"]["gain"];
 
     if (currentGain == previousGain)
     {
