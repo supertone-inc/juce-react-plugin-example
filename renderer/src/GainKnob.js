@@ -72,9 +72,12 @@ function Knob({
     }
 
     function handleMouseUp() {
+      window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("mousemove", handleMouseMove);
+      document.body.style.cursor = "default";
     }
 
+    document.body.style.cursor = "ns-resize";
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   }
