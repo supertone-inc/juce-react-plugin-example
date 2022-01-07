@@ -35,6 +35,7 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 //==============================================================================
 void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
 {
+    juce::ignoreUnused(g);
 }
 
 void AudioPluginAudioProcessorEditor::resized()

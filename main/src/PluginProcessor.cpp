@@ -18,6 +18,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     , store(createStore(storeWorkIoContext))
 {
     webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
+        juce::ignoreUnused(connection);
         webSocketServer.broadcast(std::string("got ") + message);
     });
     webSocketServer.start(0);
