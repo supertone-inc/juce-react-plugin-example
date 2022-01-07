@@ -1,11 +1,9 @@
 #pragma once
 
 #include "WebSocketServer.h"
+#include "store.h"
 
-#include <array>
-#include <chrono>
 #include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_dsp/juce_dsp.h>
 
 //==============================================================================
 class AudioPluginAudioProcessor : public juce::AudioProcessor
@@ -52,16 +50,11 @@ private:
     void pushNextSampleIntoFifo(float sample) noexcept;
 
     //==============================================================================
+    boost::asio::io_context storeWorkIoContext;
+    boost::asio::executor_work_guard<boost::asio::io_context::executor_type> storeWork;
+    std::thread storeWorkThread;
+    Store store;
     WebSocketServer webSocketServer;
-
-    static constexpr auto FFT_ORDER = 10;
-    static constexpr auto FFT_SIZE = 1 << FFT_ORDER;
-    juce::dsp::FFT forwardFFT;
-    std::array<float, FFT_SIZE> fifo;
-    std::array<float, FFT_SIZE * 2> fftData;
-    std::array<float, FFT_SIZE / 2> spectrum;
-    size_t fifoIndex = 0;
-    std::chrono::steady_clock::time_point lastBroadcastTime;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessor)
