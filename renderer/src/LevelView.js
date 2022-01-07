@@ -1,4 +1,4 @@
-export default function Level({ level, style, ...props }) {
+export default function LevelView({ level, style, ...props }) {
   return (
     <div style={{ ...style }} {...props}>
       <div

@@ -1,5 +1,5 @@
-import Level from "./Level";
-import Spectrum from "./Spectrum";
+import LevelView from "./LevelView";
+import SpectrumView from "./SpectrumView";
 import { StoreProvider, createWebSocketStore } from "./store";
 
 const port = new URL(window.location.href).searchParams.get("port");
@@ -17,8 +17,8 @@ export default function App() {
             height: "100vh",
           }}
         >
-          <Spectrum style={{ flex: 1 }} spectrum={state?.spectrum} />
-          <Level style={{ width: 20 }} level={state?.level} />
+          <SpectrumView style={{ flex: 1 }} spectrum={state?.spectrum} />
+          <LevelView style={{ width: 20 }} level={state?.level} />
 
           <div
             style={{
