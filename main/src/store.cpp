@@ -2,25 +2,25 @@
 
 #include <juce_dsp/juce_dsp.h>
 
-auto reducer =
-    [](State state,
-       Action action) -> std::pair<State, lager::effect<Action, lager::deps<juce::AudioProcessorValueTreeState &>>> {
-    if (action["type"].get<std::string>() == ActionType::SET_LEVEL)
+using ReducerResult = std::pair<State, lager::effect<Action, lager::deps<juce::AudioProcessorValueTreeState &>>>;
+
+auto reducer = [](State state, Action action) -> ReducerResult {
+    if (action["type"] == ActionType::SET_LEVEL)
     {
         state["level"] = action["payload"];
         return {state, lager::noop};
     }
 
-    if (action["type"].get<std::string>() == ActionType::SET_SPECTRUM)
+    if (action["type"] == ActionType::SET_SPECTRUM)
     {
         state["spectrum"] = action["payload"];
         return {state, lager::noop};
     }
 
-    if (action["type"].get<std::string>() == ActionType::UPDATE_AUDIO_BUFFER)
+    if (action["type"] == ActionType::UPDATE_AUDIO_BUFFER)
     {
         return {state, [action = std::move(action)](auto &&ctx) {
-                    auto buffer = action["payload"].get<std::vector<float>>();
+                    std::vector<float> buffer = action["payload"];
 
                     static constexpr auto FFT_ORDER = 10;
                     static constexpr auto FFT_SIZE = 1 << FFT_ORDER;
@@ -71,7 +71,7 @@ auto reducer =
                 }};
     }
 
-    if (action["type"].get<std::string>() == ActionType::UPDATE_PARAMETERS)
+    if (action["type"] == ActionType::UPDATE_PARAMETERS)
     {
         for (auto &[key, value] : action["payload"].items())
         {
@@ -83,7 +83,7 @@ auto reducer =
 
                     for (auto &[key, value] : action["payload"].items())
                     {
-                        parameters.getRawParameterValue(key)->store(value.get<float>());
+                        parameters.getRawParameterValue(key)->store(value);
                     }
                 }};
     }
