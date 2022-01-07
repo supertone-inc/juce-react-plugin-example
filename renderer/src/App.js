@@ -1,6 +1,6 @@
 import React from "react";
 
-import GainKnob from "./GainKnob";
+import Knob from "./Knob";
 import LevelView from "./LevelView";
 import SpectrumView from "./SpectrumView";
 import { StoreProvider, createWebSocketStore } from "./store";
@@ -24,14 +24,15 @@ export default function App() {
         >
           <SpectrumView style={{ flex: 1 }} spectrum={state?.spectrum} />
           <LevelView style={{ width: 50 }} level={state?.level} />
-          <GainKnob
+          <Knob
             style={{
               position: "absolute",
               left: "50%",
               top: "50%",
               transform: "translate(-50%, -50%)",
             }}
-            gain={gain}
+            label="Gain"
+            value={gain}
             onChange={setGain}
           />
 

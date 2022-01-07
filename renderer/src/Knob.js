@@ -45,7 +45,7 @@ function Arc({ color, background, ...props }) {
   );
 }
 
-function Knob({
+export default function Knob({
   label,
   value,
   min = 0,
@@ -159,8 +159,4 @@ function Knob({
       </div>
     </div>
   );
-}
-
-export default function GainKnob({ gain, ...props }) {
-  return <Knob label="Gain" value={gain} {...props} />;
 }
