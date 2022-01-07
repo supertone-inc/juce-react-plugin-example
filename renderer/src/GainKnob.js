@@ -128,6 +128,10 @@ export default function GainKnob({
     handleChange(clamp(min, max, event.target.value));
   }
 
+  function handleInputWheel(event) {
+    handleChange(clamp(min, max, gain + event.deltaY * step));
+  }
+
   function handleInputKeyPress(event) {
     if (event.key === "Enter") {
       event.target.blur();
@@ -174,6 +178,7 @@ export default function GainKnob({
             step={step}
             maxLength={3}
             onChange={handleInputChange}
+            onWheel={handleInputWheel}
             onKeyPress={handleInputKeyPress}
           />
         </div>
