@@ -17,9 +17,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     , storeWorkThread(std::thread([&]() { storeWorkIoContext.run(); }))
     , store(createStore(storeWorkIoContext))
 {
-    webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
-        webSocketServer.broadcast(std::string("got ") + message);
-    });
+    webSocketServer.addMessageHandler(
+        [&](ClientConnection, const std::string &message) { store.dispatch(Action::parse(message)); });
     webSocketServer.start(0);
     DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
 

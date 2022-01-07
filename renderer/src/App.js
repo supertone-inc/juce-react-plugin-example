@@ -1,5 +1,3 @@
-import React from "react";
-
 import Knob from "./Knob";
 import LevelView from "./LevelView";
 import SpectrumView from "./SpectrumView";
@@ -10,11 +8,9 @@ const port = new URL(window.location.href).searchParams.get("port");
 const store = createWebSocketStore(`ws://localhost:${port}`);
 
 export default function App() {
-  const [gain, setGain] = React.useState(0.5);
-
   return (
     <StoreProvider store={store}>
-      {({ state }) => (
+      {({ state, dispatch }) => (
         <div
           style={{
             display: "flex",
@@ -32,8 +28,10 @@ export default function App() {
               transform: "translate(-50%, -50%)",
             }}
             label="Gain"
-            value={gain}
-            onChange={setGain}
+            value={state?.parameters?.gain}
+            onChange={(value) =>
+              dispatch({ type: "UPDATE_PARAMETERS", payload: { gain: value } })
+            }
           />
 
           <div

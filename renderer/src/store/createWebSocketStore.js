@@ -26,7 +26,7 @@ export default function createWebSocketStore(url, protocols) {
       return unsubscribe;
     },
     dispatch(action) {
-      socket.send(action);
+      socket.send(JSON.stringify(action));
     },
   };
 }

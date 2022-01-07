@@ -69,6 +69,16 @@ auto reducer = [](State state, Action action) -> std::pair<State, lager::effect<
                 }};
     }
 
+    if (action["type"].get<std::string>() == ActionType::UPDATE_PARAMETERS)
+    {
+        for (auto &[key, value] : action["payload"].items())
+        {
+            state["parameters"][key] = value;
+        }
+
+        return {state, lager::noop};
+    }
+
     return {state, lager::noop};
 };
 
