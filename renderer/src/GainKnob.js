@@ -75,8 +75,10 @@ function Knob({
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("mousemove", handleMouseMove);
       document.body.style.cursor = "default";
+      document.onselectstart = () => true;
     }
 
+    document.onselectstart = () => false;
     document.body.style.cursor = "ns-resize";
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
