@@ -1,5 +1,6 @@
 #pragma once
 
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <lager/event_loop/boost_asio.hpp>
 #include <lager/store.hpp>
 #include <nlohmann/json.hpp>
@@ -18,4 +19,4 @@ const std::string UPDATE_AUDIO_BUFFER("UPDATE_AUDIO_BUFFER");
 const std::string UPDATE_PARAMETERS("UPDATE_PARAMETERS");
 } // namespace ActionType
 
-Store createStore(boost::asio::io_context &context);
+Store createStore(boost::asio::io_context &context, juce::AudioProcessorValueTreeState &parameters);

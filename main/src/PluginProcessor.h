@@ -50,6 +50,8 @@ private:
     void pushNextSampleIntoFifo(float sample) noexcept;
 
     //==============================================================================
+    juce::AudioProcessorValueTreeState parameters;
+
     boost::asio::io_context storeWorkIoContext;
     boost::asio::executor_work_guard<boost::asio::io_context::executor_type> storeWork;
     std::thread storeWorkThread;

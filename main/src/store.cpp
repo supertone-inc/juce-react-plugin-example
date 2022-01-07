@@ -2,7 +2,9 @@
 
 #include <juce_dsp/juce_dsp.h>
 
-auto reducer = [](State state, Action action) -> std::pair<State, lager::effect<Action>> {
+auto reducer =
+    [](State state,
+       Action action) -> std::pair<State, lager::effect<Action, lager::deps<juce::AudioProcessorValueTreeState &>>> {
     if (action["type"].get<std::string>() == ActionType::SET_LEVEL)
     {
         state["level"] = action["payload"];
@@ -76,15 +78,26 @@ auto reducer = [](State state, Action action) -> std::pair<State, lager::effect<
             state["parameters"][key] = value;
         }
 
-        return {state, lager::noop};
+        return {state, [action = std::move(action)](auto &&ctx) {
+                    auto &parameters = lager::get<juce::AudioProcessorValueTreeState>(ctx);
+
+                    for (auto &[key, value] : action["payload"].items())
+                    {
+                        if (value.is_number())
+                        {
+                            parameters.getRawParameterValue(key)->store(value.get<float>());
+                        }
+                    }
+                }};
     }
 
     return {state, lager::noop};
 };
 
-Store createStore(boost::asio::io_context &context)
+Store createStore(boost::asio::io_context &context, juce::AudioProcessorValueTreeState &parameters)
 {
     return lager::make_store<Action>(State(),
                                      lager::with_boost_asio_event_loop{context.get_executor()},
-                                     lager::with_reducer(reducer));
+                                     lager::with_reducer(reducer),
+                                     lager::with_deps(std::ref(parameters)));
 }

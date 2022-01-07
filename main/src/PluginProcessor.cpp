@@ -12,10 +12,20 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                          )
+    , parameters(*this,
+                 nullptr,
+                 juce::Identifier(JucePlugin_Name),
+                 {
+                     std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
+                                                                 "Gain", // parameter name
+                                                                 0.0f,   // minimum value
+                                                                 1.0f,   // maximum value
+                                                                 0.75f), // default value
+                 })
     , storeWorkIoContext()
     , storeWork(boost::asio::make_work_guard(storeWorkIoContext))
     , storeWorkThread(std::thread([&]() { storeWorkIoContext.run(); }))
-    , store(createStore(storeWorkIoContext))
+    , store(createStore(storeWorkIoContext, parameters))
 {
     webSocketServer.addMessageHandler(
         [&](ClientConnection, const std::string &message) { store.dispatch(Action::parse(message)); });
@@ -154,6 +164,19 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
+
+    static auto previousGain = parameters.getRawParameterValue("gain")->load();
+    auto currentGain = parameters.getRawParameterValue("gain")->load();
+
+    if (currentGain == previousGain)
+    {
+        buffer.applyGain(currentGain);
+    }
+    else
+    {
+        buffer.applyGainRamp(0, buffer.getNumSamples(), previousGain, currentGain);
+        previousGain = currentGain;
+    }
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
