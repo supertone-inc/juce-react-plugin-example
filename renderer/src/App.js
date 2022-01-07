@@ -29,7 +29,7 @@ export default function App() {
               fontSize: 10,
             }}
           >
-            Port: {port}
+            {window.location.href}
           </div>
         </div>
       )}
