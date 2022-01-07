@@ -83,10 +83,12 @@ auto reducer =
 
                     for (auto &[key, value] : action["payload"].items())
                     {
-                        if (value.is_number())
+                        if (!value.is_number())
                         {
-                            parameters.getRawParameterValue(key)->store(value.get<float>());
+                            continue;
                         }
+
+                        parameters.getRawParameterValue(key)->store(value.get<float>());
                     }
                 }};
     }
@@ -96,7 +98,22 @@ auto reducer =
 
 Store createStore(boost::asio::io_context &context, juce::AudioProcessorValueTreeState &parameters)
 {
-    return lager::make_store<Action>(State(),
+    auto initialState = State();
+
+    for (auto node : parameters.state)
+    {
+        if (!node.hasType("PARAM"))
+        {
+            continue;
+        }
+
+        std::string key = node["id"].toString().toStdString();
+        float value = node["value"];
+
+        initialState["parameters"][key] = value;
+    }
+
+    return lager::make_store<Action>(initialState,
                                      lager::with_boost_asio_event_loop{context.get_executor()},
                                      lager::with_reducer(reducer),
                                      lager::with_deps(std::ref(parameters)));
