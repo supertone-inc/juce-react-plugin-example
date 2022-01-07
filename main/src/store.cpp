@@ -83,11 +83,6 @@ auto reducer =
 
                     for (auto &[key, value] : action["payload"].items())
                     {
-                        if (!value.is_number())
-                        {
-                            continue;
-                        }
-
                         parameters.getRawParameterValue(key)->store(value.get<float>());
                     }
                 }};
@@ -102,11 +97,6 @@ Store createStore(boost::asio::io_context &context, juce::AudioProcessorValueTre
 
     for (auto node : parameters.state)
     {
-        if (!node.hasType("PARAM"))
-        {
-            continue;
-        }
-
         std::string key = node["id"].toString().toStdString();
         float value = node["value"];
 
