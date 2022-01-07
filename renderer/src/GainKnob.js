@@ -1,5 +1,7 @@
 import React from "react";
 
+const clamp = (min, max, value) => Math.max(min, Math.min(max, value));
+
 const pointOnCircle = (center, radius, angle) => ({
   x: center + radius * Math.cos(angle),
   y: center + radius * Math.sin(angle),
@@ -64,7 +66,7 @@ function Knob({
     function handleMouseMove(event) {
       const y = event.pageY;
       const dValue = (initialY - y) * valuePerPixel;
-      const newValue = Math.min(max, Math.max(min, value + dValue));
+      const newValue = clamp(min, max, value + dValue);
 
       onChange?.(newValue);
     }
@@ -99,6 +101,58 @@ function Knob({
   );
 }
 
-export default function GainKnob({ gain, ...props }) {
-  return <Knob value={gain} {...props} />;
+export default function GainKnob({
+  gain,
+  min = 0,
+  max = 1,
+  onChange,
+  ...props
+}) {
+  function handleChange(value) {
+    onChange?.(Number(value.toFixed(2)));
+  }
+
+  function handleInputChange(event) {
+    handleChange(clamp(min, max, event.target.value));
+  }
+
+  return (
+    <div {...props}>
+      <div
+        style={{
+          position: "relative",
+        }}
+      >
+        <Knob value={gain} min={min} max={max} onChange={handleChange} />
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <div>Gain</div>
+          <input
+            style={{
+              textAlign: "center",
+              color: "inherit",
+              background: "none",
+              border: "none",
+              pointerEvents: "auto",
+            }}
+            type="number"
+            value={gain}
+            min={min}
+            max={max}
+            step={0.01}
+            maxLength={3}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
