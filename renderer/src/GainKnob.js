@@ -46,6 +46,7 @@ function Arc({ color, background, ...props }) {
 }
 
 function Knob({
+  label,
   value,
   min = 0,
   max = 1,
@@ -56,10 +57,13 @@ function Knob({
   angleOffset = 220,
   angleRange = 280,
   thickness = 10,
-  style,
   onChange,
   ...props
 }) {
+  function handleChange(value) {
+    onChange?.(Number(value.toFixed(2)));
+  }
+
   function handleMouseDown(event) {
     const initialY = event.pageY;
 
@@ -67,7 +71,7 @@ function Knob({
       const deltaY = event.pageY - initialY;
       const newValue = clamp(min, max, value - deltaY * step);
 
-      onChange?.(newValue);
+      handleChange(newValue);
     }
 
     function handleMouseUp() {
@@ -86,72 +90,44 @@ function Knob({
   function handleWheel(event) {
     const newValue = clamp(min, max, value + event.deltaY * step);
 
-    onChange?.(newValue);
+    handleChange(newValue);
   }
 
-  return (
-    <svg
-      style={{ cursor: "ns-resize", ...style }}
-      width={size}
-      height={size}
-      onMouseDown={handleMouseDown}
-      onWheel={handleWheel}
-      {...props}
-    >
-      <Arc
-        color={color}
-        background={background}
-        angleOffset={angleOffset}
-        angleRange={angleRange}
-        thickness={thickness}
-        radius={size / 2}
-        center={size / 2}
-        percentage={(value - min) / (max - min)}
-      />
-    </svg>
-  );
-}
-
-export default function GainKnob({
-  gain,
-  min = 0,
-  max = 1,
-  step = 0.01,
-  onChange,
-  ...props
-}) {
-  function handleChange(value) {
-    onChange?.(Number(value.toFixed(2)));
+  function handleKeyPress(event) {
+    if (event.key === "Enter") {
+      event.target.blur();
+    }
   }
 
   function handleInputChange(event) {
     handleChange(clamp(min, max, event.target.value));
   }
 
-  function handleInputWheel(event) {
-    handleChange(clamp(min, max, gain + event.deltaY * step));
-  }
-
-  function handleInputKeyPress(event) {
-    if (event.key === "Enter") {
-      event.target.blur();
-    }
-  }
-
   return (
-    <div {...props}>
+    <div
+      onMouseDown={handleMouseDown}
+      onWheel={handleWheel}
+      onKeyPress={handleKeyPress}
+      {...props}
+    >
       <div
         style={{
           position: "relative",
         }}
       >
-        <Knob
-          value={gain}
-          min={min}
-          max={max}
-          step={step}
-          onChange={handleChange}
-        />
+        <svg style={{ cursor: "ns-resize" }} width={size} height={size}>
+          <Arc
+            color={color}
+            background={background}
+            angleOffset={angleOffset}
+            angleRange={angleRange}
+            thickness={thickness}
+            radius={size / 2}
+            center={size / 2}
+            percentage={(value - min) / (max - min)}
+          />
+        </svg>
+
         <div
           style={{
             position: "absolute",
@@ -162,7 +138,7 @@ export default function GainKnob({
             pointerEvents: "none",
           }}
         >
-          <div>Gain</div>
+          <div>{label}</div>
           <input
             style={{
               textAlign: "center",
@@ -172,17 +148,19 @@ export default function GainKnob({
               pointerEvents: "auto",
             }}
             type="number"
-            value={gain}
+            value={value}
             min={min}
             max={max}
             step={step}
             maxLength={3}
             onChange={handleInputChange}
-            onWheel={handleInputWheel}
-            onKeyPress={handleInputKeyPress}
           />
         </div>
       </div>
     </div>
   );
+}
+
+export default function GainKnob({ gain, ...props }) {
+  return <Knob label="Gain" value={gain} {...props} />;
 }
