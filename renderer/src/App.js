@@ -42,6 +42,8 @@ export default function App() {
               bottom: 0,
               margin: 10,
               fontSize: 10,
+              WebkitUserSelect: "all",
+              userSelect: "all",
             }}
           >
             {window.location.href}

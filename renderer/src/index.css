@@ -8,4 +8,5 @@ html {
   background-color: #222;
   color: #fff;
   font-family: sans-serif;
+  user-select: none;
 }
