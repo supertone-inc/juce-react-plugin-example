@@ -148,7 +148,7 @@ export default function Knob({
               pointerEvents: "auto",
             }}
             type="number"
-            value={value}
+            value={Number(value?.toFixed(2))}
             min={min}
             max={max}
             step={step}
