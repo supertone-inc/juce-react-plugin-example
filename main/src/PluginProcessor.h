@@ -6,7 +6,9 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 
 //==============================================================================
-class AudioPluginAudioProcessor : public juce::AudioProcessor
+class AudioPluginAudioProcessor
+    : public juce::AudioProcessor
+    , public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -44,6 +46,9 @@ public:
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
+
+    //==============================================================================
+    void parameterChanged(const juce::String &parameterID, float newValue) override;
 
 private:
     //==============================================================================

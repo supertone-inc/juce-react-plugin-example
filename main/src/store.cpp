@@ -83,7 +83,7 @@ auto reducer = [](State state, Action action) -> ReducerResult {
 
                     for (auto &[key, value] : action["payload"].items())
                     {
-                        parameters.getRawParameterValue(key)->store(value);
+                        parameters.getParameter(key)->setValueNotifyingHost(value);
                     }
                 }};
     }

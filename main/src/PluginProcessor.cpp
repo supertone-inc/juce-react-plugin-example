@@ -14,7 +14,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          )
     , parameters(*this,
                  nullptr,
-                 juce::Identifier(JucePlugin_Name),
+                 juce::Identifier("PARAMS"),
                  {
                      std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
                                                                  "Gain", // parameter name
@@ -27,6 +27,12 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     , storeWorkThread(std::thread([&]() { storeWorkIoContext.run(); }))
     , store(createStore(storeWorkIoContext, parameters))
 {
+    for (auto node : parameters.state)
+    {
+        auto id = node["id"].toString();
+        parameters.addParameterListener(id, this);
+    }
+
     webSocketServer.addMessageHandler([&](ClientConnection connection, const std::string &message) {
         juce::ignoreUnused(connection);
         store.dispatch(Action::parse(message));
@@ -215,14 +221,27 @@ void AudioPluginAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    juce::ignoreUnused(destData);
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
 }
 
 void AudioPluginAudioProcessor::setStateInformation(const void *data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    juce::ignoreUnused(data, sizeInBytes);
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+    if (xmlState.get() != nullptr && xmlState->hasTagName(parameters.state.getType()))
+    {
+        parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+    }
+}
+
+void AudioPluginAudioProcessor::parameterChanged(const juce::String &parameterID, float newValue)
+{
+    store.dispatch(
+        Action{{"type", ActionType::UPDATE_PARAMETERS}, {"payload", {{parameterID.toStdString(), newValue}}}});
 }
 
 //==============================================================================
