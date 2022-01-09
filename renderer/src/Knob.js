@@ -104,16 +104,16 @@ export default function Knob({
   }
 
   return (
-    <div
-      onMouseDown={handleMouseDown}
-      onWheel={handleWheel}
-      onKeyPress={handleKeyPress}
-      {...props}
-    >
+    <div {...props}>
       <div
         style={{
           position: "relative",
+          pointerEvents: isNaN(value) ? "none" : "auto",
+          opacity: isNaN(value) ? 0.5 : 1,
         }}
+        onMouseDown={handleMouseDown}
+        onWheel={handleWheel}
+        onKeyPress={handleKeyPress}
       >
         <svg style={{ cursor: "ns-resize" }} width={size} height={size}>
           <Arc
@@ -145,7 +145,7 @@ export default function Knob({
               color: "inherit",
               background: "none",
               border: "none",
-              pointerEvents: "auto",
+              pointerEvents: isNaN(value) ? "none" : "auto",
             }}
             type="number"
             value={Number(value?.toFixed(2))}
