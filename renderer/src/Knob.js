@@ -152,7 +152,6 @@ export default function Knob({
             min={min}
             max={max}
             step={step}
-            maxLength={3}
             onChange={handleInputChange}
           />
         </div>
