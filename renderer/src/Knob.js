@@ -60,10 +60,6 @@ export default function Knob({
   onChange,
   ...props
 }) {
-  function handleChange(value) {
-    onChange?.(Number(value.toFixed(2)));
-  }
-
   function handleMouseDown(event) {
     const initialY = event.pageY;
 
@@ -71,7 +67,7 @@ export default function Knob({
       const deltaY = event.pageY - initialY;
       const newValue = clamp(min, max, value - deltaY * step);
 
-      handleChange(newValue);
+      onChange?.(newValue);
     }
 
     function handleMouseUp() {
@@ -90,7 +86,7 @@ export default function Knob({
   function handleWheel(event) {
     const newValue = clamp(min, max, value + event.deltaY * step);
 
-    handleChange(newValue);
+    onChange?.(newValue);
   }
 
   function handleKeyPress(event) {
@@ -100,7 +96,7 @@ export default function Knob({
   }
 
   function handleInputChange(event) {
-    handleChange(clamp(min, max, event.target.value));
+    onChange?.(clamp(min, max, event.target.value));
   }
 
   return (
