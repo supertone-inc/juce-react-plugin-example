@@ -199,6 +199,10 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
         return;
     }
 
+    auto level = buffer.getMagnitude(0, 0, buffer.getNumSamples());
+
+    store.dispatch(Action{{"type", ActionType::SET_LEVEL}, {"payload", level}});
+
     static constexpr auto FFT_ORDER = 10;
     static constexpr auto FFT_SIZE = 1 << FFT_ORDER;
     static constexpr auto MIN_DB = -100.0f;
@@ -242,10 +246,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
                                      1.0f);
         }
 
-        auto level = std::accumulate(spectrum.begin(), spectrum.end(), 0.0f) / spectrum.size();
-
         store.dispatch(Action{{"type", ActionType::SET_SPECTRUM}, {"payload", spectrum}});
-        store.dispatch(Action{{"type", ActionType::SET_LEVEL}, {"payload", level}});
     }
 }
 
