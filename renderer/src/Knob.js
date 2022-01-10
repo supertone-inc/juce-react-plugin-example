@@ -144,7 +144,7 @@ export default function Knob({
               pointerEvents: isNaN(value) ? "none" : "auto",
             }}
             type="number"
-            value={Number(value?.toFixed(2))}
+            value={Number(value?.toFixed(Math.log10(1.0 / step)))}
             min={min}
             max={max}
             step={step}
