@@ -22,7 +22,6 @@ public:
     bool isBusesLayoutSupported(const BusesLayout &layouts) const override;
 
     void processBlock(juce::AudioBuffer<float> &, juce::MidiBuffer &) override;
-    using AudioProcessor::processBlock;
 
     //==============================================================================
     juce::AudioProcessorEditor *createEditor() override;
@@ -51,9 +50,6 @@ public:
     void parameterChanged(const juce::String &parameterID, float newValue) override;
 
 private:
-    //==============================================================================
-    void pushNextSampleIntoFifo(float sample) noexcept;
-
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
 

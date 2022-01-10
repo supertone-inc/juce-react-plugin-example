@@ -15,7 +15,6 @@ namespace ActionType
 {
 const std::string SET_LEVEL("SET_LEVEL");
 const std::string SET_SPECTRUM("SET_SPECTRUM");
-const std::string UPDATE_AUDIO_BUFFER("UPDATE_AUDIO_BUFFER");
 const std::string UPDATE_PARAMETERS("UPDATE_PARAMETERS");
 } // namespace ActionType
 

@@ -2,6 +2,8 @@
 
 #include "PluginEditor.h"
 
+#include <juce_dsp/juce_dsp.h>
+
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     : AudioProcessor(BusesProperties()
@@ -192,15 +194,58 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    if (totalNumInputChannels < 1)
     {
-        if (channel == 0)
-        {
-            auto *readPointer = buffer.getReadPointer(channel);
-            std::vector<float> channelData(readPointer, readPointer + buffer.getNumSamples());
+        return;
+    }
 
-            store.dispatch(Action{{"type", ActionType::UPDATE_AUDIO_BUFFER}, {"payload", std::move(channelData)}});
+    static constexpr auto FFT_ORDER = 10;
+    static constexpr auto FFT_SIZE = 1 << FFT_ORDER;
+    static constexpr auto MIN_DB = -100.0f;
+    static constexpr auto MAX_DB = 0.0f;
+
+    static juce::dsp::FFT forwardFFT(FFT_ORDER);
+
+    static std::array<float, FFT_SIZE> fifo;
+    static std::array<float, FFT_SIZE * 2> fftData;
+    static std::array<float, FFT_SIZE / 2> spectrum;
+
+    static size_t fifoIndex = 0;
+
+    auto *readPointer = buffer.getReadPointer(0);
+
+    for (auto i = 0; i < buffer.getNumSamples(); i++)
+    {
+        fifo[fifoIndex++] = readPointer[i];
+
+        if (fifoIndex < FFT_SIZE)
+        {
+            continue;
         }
+
+        fifoIndex = 0;
+
+        std::fill(fftData.begin(), fftData.end(), 0.0f);
+        std::copy(fifo.begin(), fifo.end(), fftData.begin());
+        forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
+        std::copy(fftData.begin(), fftData.begin() + spectrum.size(), spectrum.begin());
+
+        for (size_t j = 0; j < spectrum.size(); j++)
+        {
+            spectrum[j] = juce::jmap(juce::jlimit(MIN_DB,
+                                                  MAX_DB,
+                                                  juce::Decibels::gainToDecibels(spectrum[j]) -
+                                                      juce::Decibels::gainToDecibels((float)FFT_SIZE)),
+                                     MIN_DB,
+                                     MAX_DB,
+                                     0.0f,
+                                     1.0f);
+        }
+
+        auto level = std::accumulate(spectrum.begin(), spectrum.end(), 0.0f) / spectrum.size();
+
+        store.dispatch(Action{{"type", ActionType::SET_SPECTRUM}, {"payload", spectrum}});
+        store.dispatch(Action{{"type", ActionType::SET_LEVEL}, {"payload", level}});
     }
 }
 
