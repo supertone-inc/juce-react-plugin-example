@@ -12,14 +12,30 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                          )
+    , parameters(*this,
+                 nullptr,
+                 juce::Identifier("PARAMS"),
+                 {
+                     std::make_unique<juce::AudioParameterFloat>("gain", // parameterID
+                                                                 "Gain", // parameter name
+                                                                 0.0f,   // minimum value
+                                                                 1.0f,   // maximum value
+                                                                 0.75f), // default value
+                 })
     , storeWorkIoContext()
     , storeWork(boost::asio::make_work_guard(storeWorkIoContext))
     , storeWorkThread(std::thread([&]() { storeWorkIoContext.run(); }))
-    , store(createStore(storeWorkIoContext))
+    , store(createStore(storeWorkIoContext, parameters))
 {
-    webSocketServer.addMessageHandler([this](ClientConnection connection, const std::string &message) {
+    for (auto node : parameters.state)
+    {
+        auto id = node["id"].toString();
+        parameters.addParameterListener(id, this);
+    }
+
+    webSocketServer.addMessageHandler([&](ClientConnection connection, const std::string &message) {
         juce::ignoreUnused(connection);
-        webSocketServer.broadcast(std::string("got ") + message);
+        store.dispatch(Action::parse(message));
     });
     webSocketServer.start(0);
     DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
@@ -157,6 +173,19 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
+    static float previousGain = store.get()["parameters"]["gain"];
+    float currentGain = store.get()["parameters"]["gain"];
+
+    if (currentGain == previousGain)
+    {
+        buffer.applyGain(currentGain);
+    }
+    else
+    {
+        buffer.applyGainRamp(0, buffer.getNumSamples(), previousGain, currentGain);
+        previousGain = currentGain;
+    }
+
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
@@ -192,14 +221,34 @@ void AudioPluginAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    juce::ignoreUnused(destData);
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
 }
 
 void AudioPluginAudioProcessor::setStateInformation(const void *data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    juce::ignoreUnused(data, sizeInBytes);
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+    if (xmlState.get() != nullptr && xmlState->hasTagName(parameters.state.getType()))
+    {
+        parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+    }
+}
+
+void AudioPluginAudioProcessor::parameterChanged(const juce::String &parameterID, float newValue)
+{
+    auto state = store.get();
+    auto id = parameterID.toStdString();
+
+    if (abs(newValue - (float)state["parameters"][id]) < 0.001f)
+    {
+        return;
+    }
+
+    store.dispatch(Action{{"type", ActionType::UPDATE_PARAMETERS}, {"payload", {{id, newValue}}}});
 }
 
 //==============================================================================

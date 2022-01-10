@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Spectrum({ spectrum, style, ...props }) {
+export default function SpectrumView({ spectrum, style, ...props }) {
   const canvasRef = React.useRef();
 
   React.useEffect(() => {

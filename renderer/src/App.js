@@ -1,5 +1,6 @@
-import Level from "./Level";
-import Spectrum from "./Spectrum";
+import Knob from "./Knob";
+import LevelView from "./LevelView";
+import SpectrumView from "./SpectrumView";
 import { StoreProvider, createWebSocketStore } from "./store";
 
 const port = new URL(window.location.href).searchParams.get("port");
@@ -9,7 +10,7 @@ const store = createWebSocketStore(`ws://localhost:${port}`);
 export default function App() {
   return (
     <StoreProvider store={store}>
-      {({ state }) => (
+      {({ state, dispatch }) => (
         <div
           style={{
             display: "flex",
@@ -17,8 +18,21 @@ export default function App() {
             height: "100vh",
           }}
         >
-          <Spectrum style={{ flex: 1 }} spectrum={state?.spectrum} />
-          <Level style={{ width: 20 }} level={state?.level} />
+          <SpectrumView style={{ flex: 1 }} spectrum={state?.spectrum} />
+          <LevelView style={{ width: 50 }} level={state?.level} />
+          <Knob
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+            label="Gain"
+            value={state?.parameters?.gain}
+            onChange={(value) =>
+              dispatch({ type: "UPDATE_PARAMETERS", payload: { gain: value } })
+            }
+          />
 
           <div
             style={{
@@ -27,6 +41,8 @@ export default function App() {
               bottom: 0,
               margin: 10,
               fontSize: 10,
+              WebkitUserSelect: "all",
+              userSelect: "all",
             }}
           >
             {window.location.href}
