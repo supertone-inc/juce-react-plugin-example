@@ -240,8 +240,15 @@ void AudioPluginAudioProcessor::setStateInformation(const void *data, int sizeIn
 
 void AudioPluginAudioProcessor::parameterChanged(const juce::String &parameterID, float newValue)
 {
-    store.dispatch(
-        Action{{"type", ActionType::UPDATE_PARAMETERS}, {"payload", {{parameterID.toStdString(), newValue}}}});
+    auto state = store.get();
+    auto id = parameterID.toStdString();
+
+    if (abs(newValue - (float)state["parameters"][id]) < 0.001f)
+    {
+        return;
+    }
+
+    store.dispatch(Action{{"type", ActionType::UPDATE_PARAMETERS}, {"payload", {{id, newValue}}}});
 }
 
 //==============================================================================
