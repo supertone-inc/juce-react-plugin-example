@@ -1,6 +1,5 @@
 #pragma once
 
-#define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_INTERNAL_
 
 #include <functional>
@@ -15,8 +14,8 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
-typedef websocketpp::server<websocketpp::config::asio> WebsocketEndpoint;
-typedef websocketpp::connection_hdl ClientConnection;
+using WebsocketEndpoint = websocketpp::server<websocketpp::config::asio>;
+using ClientConnection = websocketpp::connection_hdl;
 
 using websocketpp::lib::bind;
 using websocketpp::lib::asio::error_code;
@@ -46,19 +45,19 @@ public:
     template <typename Callback>
     void addConnectHandler(Callback handler)
     {
-        asio::post(server.get_io_service(), [this, handler]() { connectHandlers.push_back(handler); });
+        boost::asio::post(server.get_io_service(), [this, handler]() { connectHandlers.push_back(handler); });
     }
 
     template <typename Callback>
     void addMessageHandler(Callback handler)
     {
-        asio::post(server.get_io_service(), [this, handler]() { messageHandlers.push_back(handler); });
+        boost::asio::post(server.get_io_service(), [this, handler]() { messageHandlers.push_back(handler); });
     }
 
     template <typename Callback>
     void addDisconnectHandler(Callback handler)
     {
-        asio::post(server.get_io_service(), [this, handler]() { disconnectHandlers.push_back(handler); });
+        boost::asio::post(server.get_io_service(), [this, handler]() { disconnectHandlers.push_back(handler); });
     }
 
     void start(uint16_t port)
