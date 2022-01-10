@@ -1,38 +1,38 @@
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 
-set(BOOST_TAG boost-1.78.0)
-set(BOOST_LIBS
-    asio
-    assert
-    bind
-    config
-    core
-    date_time
-    hana
-    intrusive
-    move
-    mpl
-    numeric_conversion
-    predef
-    preprocessor
-    regex
-    smart_ptr
-    static_assert
-    system
-    throw_exception
-    utility
-    type_traits
+set(BOOST_SUBMODULES
+    libs/asio
+    libs/assert
+    libs/bind
+    libs/config
+    libs/core
+    libs/date_time
+    libs/hana
+    libs/intrusive
+    libs/move
+    libs/mpl
+    libs/numeric/conversion
+    libs/predef
+    libs/preprocessor
+    libs/regex
+    libs/smart_ptr
+    libs/static_assert
+    libs/system
+    libs/throw_exception
+    libs/utility
+    libs/type_traits
 )
-foreach(lib IN LISTS BOOST_LIBS)
-    FetchContent_Declare(
-        boost_${lib}
-        GIT_REPOSITORY  https://github.com/boostorg/${lib}.git
-        GIT_TAG         ${BOOST_TAG}
-        GIT_SHALLOW     TRUE
-    )
-    FetchContent_Populate(boost_${lib})
-    include_directories(SYSTEM ${boost_${lib}_SOURCE_DIR}/include)
+FetchContent_Declare(
+    boost
+    GIT_REPOSITORY  https://github.com/boostorg/boost.git
+    GIT_TAG         boost-1.78.0
+    GIT_SHALLOW     TRUE
+    GIT_SUBMODULES  ${BOOST_SUBMODULES}
+)
+FetchContent_Populate(boost)
+foreach(submodule IN LISTS BOOST_SUBMODULES)
+    include_directories(SYSTEM ${boost_SOURCE_DIR}/${submodule}/include)
 endforeach()
 
 FetchContent_Declare(
