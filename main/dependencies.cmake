@@ -23,6 +23,18 @@ set(BOOST_SUBMODULES
     libs/utility
     libs/type_traits
 )
+
+if(WIN32)
+    list(APPEND BOOST_SUBMODULES
+        libs/container_hash
+        libs/detail
+        libs/integer
+        libs/type_index
+        libs/winapi
+        libs/variant
+    )
+endif()
+
 FetchContent_Declare(
     boost
     GIT_REPOSITORY  https://github.com/boostorg/boost.git
