@@ -35,6 +35,10 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
         parameters.addParameterListener(id, this);
     }
 
+    webSocketServer.addConnectHandler([&](ClientConnection connection) {
+        auto state = store.get();
+        webSocketServer.send(connection, state.dump());
+    });
     webSocketServer.addMessageHandler([&](ClientConnection connection, const std::string &message) {
         juce::ignoreUnused(connection);
         store.dispatch(Action::parse(message));
