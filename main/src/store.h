@@ -8,7 +8,15 @@
 using json = nlohmann::json;
 
 using State = json;
-using Action = json;
+
+struct Action
+{
+    std::string type;
+    json payload;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Action, type, payload)
+};
+
 using Store = lager::store<Action, State>;
 
 namespace ActionType

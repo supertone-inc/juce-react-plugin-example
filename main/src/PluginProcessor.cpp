@@ -41,7 +41,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
     });
     webSocketServer.addMessageHandler([&](ClientConnection connection, const std::string &message) {
         juce::ignoreUnused(connection);
-        store.dispatch(Action::parse(message));
+        store.dispatch(json::parse(message));
     });
     webSocketServer.start(0);
     DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
@@ -205,7 +205,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
 
     auto level = buffer.getMagnitude(0, 0, buffer.getNumSamples());
 
-    store.dispatch(Action{{"type", ActionType::SET_LEVEL}, {"payload", level}});
+    store.dispatch(Action{ActionType::SET_LEVEL, level});
 
     static constexpr auto FFT_ORDER = 10;
     static constexpr auto FFT_SIZE = 1 << FFT_ORDER;
@@ -250,7 +250,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, j
                                      1.0f);
         }
 
-        store.dispatch(Action{{"type", ActionType::SET_SPECTRUM}, {"payload", spectrum}});
+        store.dispatch(Action{ActionType::SET_SPECTRUM, spectrum});
     }
 }
 
@@ -298,7 +298,7 @@ void AudioPluginAudioProcessor::parameterChanged(const juce::String &parameterID
         return;
     }
 
-    store.dispatch(Action{{"type", ActionType::UPDATE_PARAMETERS}, {"payload", {{id, newValue}}}});
+    store.dispatch(Action{ActionType::UPDATE_PARAMETERS, {{id, newValue}}});
 }
 
 //==============================================================================

@@ -3,21 +3,21 @@
 using ReducerResult = std::pair<State, lager::effect<Action, lager::deps<juce::AudioProcessorValueTreeState &>>>;
 
 auto reducer = [](State state, Action action) -> ReducerResult {
-    if (action["type"] == ActionType::SET_LEVEL)
+    if (action.type == ActionType::SET_LEVEL)
     {
-        state["level"] = action["payload"];
+        state["level"] = action.payload;
         return {state, lager::noop};
     }
 
-    if (action["type"] == ActionType::SET_SPECTRUM)
+    if (action.type == ActionType::SET_SPECTRUM)
     {
-        state["spectrum"] = action["payload"];
+        state["spectrum"] = action.payload;
         return {state, lager::noop};
     }
 
-    if (action["type"] == ActionType::UPDATE_PARAMETERS)
+    if (action.type == ActionType::UPDATE_PARAMETERS)
     {
-        for (auto &[key, value] : action["payload"].items())
+        for (auto &[key, value] : action.payload.items())
         {
             state["parameters"][key] = value;
         }
@@ -25,7 +25,7 @@ auto reducer = [](State state, Action action) -> ReducerResult {
         return {state, [action = std::move(action)](auto &&ctx) {
                     auto &parameters = lager::get<juce::AudioProcessorValueTreeState>(ctx);
 
-                    for (auto &[key, value] : action["payload"].items())
+                    for (auto &[key, value] : action.payload.items())
                     {
                         parameters.getParameter(key)->setValueNotifyingHost(value);
                     }
