@@ -35,18 +35,25 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
         parameters.addParameterListener(id, this);
     }
 
+    lager::watch(store, [&](auto state) { webSocketServer.broadcast(state.dump()); });
+
     webSocketServer.addConnectHandler([&](ClientConnection connection) {
         auto state = store.get();
         webSocketServer.send(connection, state.dump());
     });
+
     webSocketServer.addMessageHandler([&](ClientConnection connection, const std::string &message) {
         juce::ignoreUnused(connection);
         store.dispatch(json::parse(message));
     });
-    webSocketServer.start(0);
-    DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
 
-    lager::watch(store, [&](auto state) { webSocketServer.broadcast(state.dump()); });
+#if DEBUG
+    webSocketServer.start(3001);
+#else
+    webSocketServer.start(0);
+#endif
+
+    DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
