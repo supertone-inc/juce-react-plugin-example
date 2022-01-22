@@ -81,7 +81,8 @@ target_sources(ReactPluginExample
     PRIVATE
         src/PluginEditor.cpp
         src/PluginProcessor.cpp
-        src/store.cpp)
+        src/store.cpp
+)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
@@ -95,7 +96,8 @@ target_compile_definitions(ReactPluginExample
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         # JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
-        JUCE_VST3_CAN_REPLACE_VST2=0)
+        JUCE_VST3_CAN_REPLACE_VST2=0
+)
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
 # a new static library target that will include all the binary resources. There is an optional
@@ -120,7 +122,8 @@ target_link_libraries(ReactPluginExample
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
-        juce::juce_recommended_warning_flags)
+        juce::juce_recommended_warning_flags
+)
 
 # Copy renderer files
 # Reference: https://github.com/juce-framework/JUCE/blob/6.1.2/extras/Build/CMake/JUCEUtils.cmake#L828
