@@ -1,0 +1,21 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "MIMode": "lldb",
+      "preLaunchTask": "preLaunch",
+      "program": "${workspaceFolder}/main/build/ReactPluginExample_artefacts/Debug/Standalone/React Plugin Example.app/Contents/MacOS/React Plugin Example",
+      "windows": {
+        "type": "cppvsdbg",
+        "program": "${workspaceFolder}/main/build/ReactPluginExample_artefacts/Debug/Standalone/React Plugin Example.exe"
+      }
+    }
+  ]
+}

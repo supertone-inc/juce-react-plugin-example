@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "osx": {
+    "options": {
+      "shell": {
+        "args": ["--login", "--interactive"]
+      }
+    }
+  },
+  "windows": {
+    "options": {
+      "shell": {
+        "executable": "powershell.exe",
+        "args": []
+      }
+    }
+  },
+  "tasks": [
+    {
+      "label": "main build-debug",
+      "type": "shell",
+      "command": "yarn workspace main build-debug"
+    },
+    {
+      "label": "renderer start",
+      "type": "shell",
+      "command": "yarn workspace renderer start",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom", // This is not needed but, required by the problemMatcher Object
+        "pattern": {
+          "regexp": "^$" // This is not needed but, required by the problemMatcher Object
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Compiling...", // Signals the begin of the Task
+          "endsPattern": "Compiled .*" // Signals that now the initialization of the task is complete
+        }
+      }
+    },
+    {
+      "label": "preLaunch",
+      "dependsOn": ["renderer start", "main build-debug"]
+    }
+  ]
+}
