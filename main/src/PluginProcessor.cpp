@@ -35,7 +35,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
         parameters.addParameterListener(id, this);
     }
 
-    lager::watch(store, [&](auto state) { webSocketServer.broadcast(state.dump()); });
+    store.watch([&](auto state) { webSocketServer.broadcast(state.dump()); });
 
     webSocketServer.addConnectHandler([&](ClientConnection connection) {
         auto state = store.get();
