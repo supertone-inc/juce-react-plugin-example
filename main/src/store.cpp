@@ -35,7 +35,34 @@ auto reducer = [](State state, Action action) -> ReducerResult {
     return {state, lager::noop};
 };
 
-Store createStore(boost::asio::io_context &context, juce::AudioProcessorValueTreeState &parameters)
+struct with_juce_event_dispatch_loop
+{
+    template <typename Fn>
+    void async(Fn &&)
+    {
+        throw std::logic_error{"juce_event_dispatch_loop does not support async()"};
+    }
+
+    template <typename Fn>
+    void post(Fn &&fn)
+    {
+        juce::MessageManager::callAsync(std::forward<Fn>(fn));
+    }
+
+    void finish()
+    {
+    }
+
+    void pause()
+    {
+    }
+
+    void resume()
+    {
+    }
+};
+
+Store createStore(juce::AudioProcessorValueTreeState &parameters)
 {
     auto initialState = State();
 
@@ -48,7 +75,7 @@ Store createStore(boost::asio::io_context &context, juce::AudioProcessorValueTre
     }
 
     return lager::make_store<Action>(initialState,
-                                     lager::with_boost_asio_event_loop{context.get_executor()},
+                                     with_juce_event_dispatch_loop{},
                                      lager::with_reducer(reducer),
                                      lager::with_deps(std::ref(parameters)));
 }

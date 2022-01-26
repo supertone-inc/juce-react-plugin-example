@@ -24,10 +24,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                                                                  1.0f,   // maximum value
                                                                  0.75f), // default value
                  })
-    , storeWorkIoContext()
-    , storeWork(boost::asio::make_work_guard(storeWorkIoContext))
-    , storeWorkThread(std::thread([&]() { storeWorkIoContext.run(); }))
-    , store(createStore(storeWorkIoContext, parameters))
+    , store(createStore(parameters))
 {
     for (auto node : parameters.state)
     {
@@ -54,16 +51,6 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 #endif
 
     DBG("WebSocketServer listening on port " << (int)webSocketServer.getLocalEndpoint().port());
-}
-
-AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
-{
-    storeWork.reset();
-
-    if (storeWorkThread.joinable())
-    {
-        storeWorkThread.join();
-    }
 }
 
 //==============================================================================

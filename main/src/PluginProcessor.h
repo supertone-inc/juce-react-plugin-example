@@ -13,7 +13,6 @@ class AudioPluginAudioProcessor
 public:
     //==============================================================================
     AudioPluginAudioProcessor();
-    ~AudioPluginAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
@@ -53,9 +52,6 @@ private:
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
 
-    boost::asio::io_context storeWorkIoContext;
-    boost::asio::executor_work_guard<boost::asio::io_context::executor_type> storeWork;
-    std::thread storeWorkThread;
     Store store;
     WebSocketServer webSocketServer;
 
