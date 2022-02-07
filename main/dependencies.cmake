@@ -69,7 +69,6 @@ FetchContent_Declare(
     lager
     GIT_REPOSITORY  https://github.com/arximboldi/lager.git
     GIT_TAG         c5588f04405d4d0bf85bd587dd90516b24b1ec65
-    GIT_SHALLOW     TRUE
 )
 FetchContent_Populate(lager)
 include_directories(SYSTEM ${lager_SOURCE_DIR})
@@ -87,7 +86,6 @@ FetchContent_Declare(
     zug
     GIT_REPOSITORY  https://github.com/arximboldi/zug.git
     GIT_TAG         033dadbed463ff3430b7ebc36df8a46f4f0f5078
-    GIT_SHALLOW     TRUE
 )
 FetchContent_Populate(zug)
 include_directories(SYSTEM ${zug_SOURCE_DIR})
