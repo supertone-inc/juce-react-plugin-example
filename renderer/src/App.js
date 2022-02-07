@@ -34,19 +34,21 @@ export default function App() {
             }
           />
 
-          <div
-            style={{
-              position: "fixed",
-              left: 0,
-              bottom: 0,
-              margin: 10,
-              fontSize: 10,
-              WebkitUserSelect: "all",
-              userSelect: "all",
-            }}
-          >
-            {window.location.href}
-          </div>
+          {process.env.NODE_ENV === "development" && (
+            <div
+              style={{
+                position: "fixed",
+                left: 0,
+                bottom: 0,
+                margin: 10,
+                fontSize: 10,
+                WebkitUserSelect: "all",
+                userSelect: "all",
+              }}
+            >
+              {window.location.href}
+            </div>
+          )}
         </div>
       )}
     </StoreProvider>
