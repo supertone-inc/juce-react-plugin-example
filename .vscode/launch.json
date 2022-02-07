@@ -10,7 +10,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "MIMode": "lldb",
-      "preLaunchTask": "preLaunch",
+      "preLaunchTask": "prelaunch",
       "program": "${workspaceFolder}/main/build/ReactPluginExample_artefacts/Debug/Standalone/React Plugin Example.app/Contents/MacOS/React Plugin Example",
       "windows": {
         "type": "cppvsdbg",

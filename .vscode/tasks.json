@@ -39,7 +39,7 @@
       }
     },
     {
-      "label": "preLaunch",
+      "label": "prelaunch",
       "dependsOn": ["renderer start", "main build-debug"]
     }
   ]
